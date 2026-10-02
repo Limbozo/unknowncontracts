@@ -488,7 +488,7 @@ function docBodyHTML(C){
   <div class="clause">${C.clauses.length+1}. ${maskHTML(C.deadline)}</div>
   <div style="margin:14px 0;border:1px solid var(--red-d);background:rgba(163,22,33,.06);padding:9px 12px;font-size:11px"><b style="color:var(--red-d)">${maskHTML(C.reward.split(':')[0]+':')}</b>${maskHTML(C.reward.split(':').slice(1).join(':'))}</div>
   <div class="signs"><div class="col">ИСПОЛНИТЕЛЬ:<div class="sigline"><span class="hand show">—</span></div></div>
-  <div class="col">ЗА ${maskHTML('ИИГ')}: ${C.signatory}<div class="sigline"><span class="hand show">Профессор</span></div></div></div>
+  <div class="col">ЗА ${maskHTML('ИИГ')}: ${C.signatory}<div class="sigline"><span class="hand show">Exo</span></div></div></div>
   <div class="diag"><span>КОПИЯ · ОРИГИНАЛ УНИЧТОЖЕН<br>К ПОДПИСАНИЮ НЕ ДЕЙСТВИТЕЛЕН</span></div>`;}
 
 (function(){const cv=$('#embers');if(!cv)return;const cx=cv.getContext('2d');let W,H,P=[];const rs=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight};rs();addEventListener('resize',rs);
