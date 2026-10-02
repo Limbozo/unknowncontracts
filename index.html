@@ -29,6 +29,11 @@ body.shake{animation:shake .35s linear}
 .hidden{display:none !important}
 .center{justify-content:center}
 
+/* АВТОЦЕНЗОР: статичные чёрные квадраты. Без анимаций и таймеров. */
+.rg{font-family:var(--mono);letter-spacing:0;user-select:none}
+/* если нужно абсолютно чёрным везде (даже в тёмном терминале): .rg{color:#000} */
+.censorStamp{width:100%;height:100%;border:3px double rgba(110,13,21,.75);border-radius:50%;color:rgba(110,13,21,.8);display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:.12em;line-height:1.5;opacity:.9}
+
 #boot{position:fixed;inset:0;z-index:70;background:var(--bg);padding:8vh 10vw;font-size:15px;line-height:1.9;color:var(--red-glow);text-shadow:0 0 8px rgba(255,45,63,.5)}
 #boot .bar{margin-top:24px;width:min(420px,80%);height:10px;border:1px solid var(--red);padding:2px}
 #boot .bar i{display:block;height:100%;width:0;background:var(--red);transition:width .2s}
@@ -36,12 +41,6 @@ body.shake{animation:shake .35s linear}
 @keyframes bootOut{to{opacity:0;visibility:hidden}}
 .cursor{display:inline-block;width:9px;height:16px;background:var(--red-glow);vertical-align:-2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
-
-/* GLITCH TEXT EFFECT */
-.glitch-text{display:inline-block;color:var(--red-glow);text-shadow:0 0 10px rgba(255,45,63,.6);letter-spacing:.15em;font-family:var(--mono)}
-.glitch-text::selection{background:var(--red);color:var(--bg)}
-.glitch-char{display:inline-block;animation:charGlitch 0.15s infinite}
-@keyframes charGlitch{0%,100%{opacity:1}50%{opacity:0.7}}
 
 header{position:relative;z-index:5;text-align:center;padding:30px 16px 8px;animation:fadeDown 1s both}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:none}}
@@ -56,10 +55,9 @@ header .sub{margin-top:7px;font-size:11px;letter-spacing:.3em;color:var(--steel)
 header .status{margin-top:8px;font-size:11px;color:var(--amber);letter-spacing:.12em}
 #sndBtn{position:fixed;top:12px;right:14px;z-index:65;background:none;border:1px solid var(--red);color:var(--red-glow);font-family:var(--mono);font-size:11px;padding:6px 10px;cursor:pointer;letter-spacing:.15em}
 
-/* LEVEL SELECTOR */
 #levelSelector{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .lvl-btn{background:none;border:1px solid var(--red-d);color:var(--red-glow);font-family:var(--mono);font-size:10px;padding:8px 14px;cursor:pointer;letter-spacing:.1em;transition:.2s}
-.lvl-btn:hover{background:rgba(163,22,33,.3);box-shadow:0 0 12px rgba(255,45,63,.4)}
+.lvl-btn:hover:not(:disabled){background:rgba(163,22,33,.3);box-shadow:0 0 12px rgba(255,45,63,.4)}
 .lvl-btn.active{background:rgba(163,22,33,.5);border-color:var(--red-glow);box-shadow:0 0 16px rgba(255,45,63,.5)}
 .lvl-btn:disabled{opacity:.4;cursor:not-allowed}
 #levelInfo{margin-top:10px;font-size:9px;color:#6b5b48;letter-spacing:.08em;text-align:center}
@@ -88,7 +86,6 @@ main{position:relative;z-index:5;display:flex;flex-direction:column;align-items:
 .p-head .emb svg{width:100%}
 .p-head .org{font-size:10.5px;line-height:1.5;letter-spacing:.03em;text-transform:uppercase}
 .p-head .org b{font-size:11.5px;letter-spacing:.12em;color:var(--red-d)}
-.p-head .org .org-name{min-height:1.2em}
 .p-meta{display:flex;justify-content:space-between;gap:10px;font-size:10.5px;margin-top:8px;flex-wrap:wrap}
 h2.doc{margin:18px 0 4px;text-align:center;font-size:14px;letter-spacing:.12em;color:var(--red-d);text-transform:uppercase}
 .doc-num{text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--ink);margin-bottom:14px}
@@ -152,7 +149,6 @@ button.act.gray{border-color:#55504a;color:#9a938a;background:none}
 #gatePass:focus{border-color:var(--red-glow);box-shadow:0 0 14px rgba(255,45,63,.4)}
 .gateErr{min-height:20px;margin-top:10px;font-size:11px;color:var(--red-glow);letter-spacing:.1em}
 
-/* UPGRADE PROMPT */
 #upgradePrompt{position:fixed;inset:0;z-index:75;background:rgba(5,4,3,.94);display:none;align-items:center;justify-content:center;padding:20px}
 #upgradePrompt.show{display:flex}
 #upgradeBox{width:min(480px,94vw);border:1px solid var(--red);background:rgba(18,9,9,.95);padding:28px 24px;text-align:center;box-shadow:0 0 40px rgba(163,22,33,.3) inset}
@@ -225,14 +221,14 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
 </template>
 
 <header id="hdr" class="hidden">
-  <div id="patchBox"><img data-emblem="patch" src="patch.png" alt="Эмблема"></div>
-  <h1 id="orgTitle"></h1>
-  <div class="sub" id="headerSub"></div>
+  <div id="patchBox"><img data-emblem="patch" src="patch.png" alt="Эмблема ИИГ"></div>
+  <h1 id="orgTitle">ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА</h1>
+  <div class="sub" id="headerSub">ЗАЩИЩЁННЫЙ ТЕРМИНАЛ КОНТРАКТОВ · УРОВЕНЬ ДОПУСКА 3</div>
   <div class="status" id="statusLine">КАНАЛ: ШИФРОВАН · СЕАНС: —</div>
   <div id="levelSelector">
-    <button class="lvl-btn" data-level="1" id="lvl1">УРОВЕНЬ 1</button>
-    <button class="lvl-btn" data-level="2" id="lvl2">УРОВЕНЬ 2</button>
-    <button class="lvl-btn" data-level="3" id="lvl3">УРОВЕНЬ 3</button>
+    <button class="lvl-btn" data-level="1">УРОВЕНЬ 1</button>
+    <button class="lvl-btn" data-level="2">УРОВЕНЬ 2</button>
+    <button class="lvl-btn" data-level="3">УРОВЕНЬ 3</button>
   </div>
   <div id="levelInfo"></div>
 </header>
@@ -240,7 +236,7 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
 <section id="gate" class="hidden">
   <div class="gEmb" id="gateEmb"><img data-emblem="patch" src="patch.png" alt=""></div>
   <h2>ДОКУМЕНТ ЗАШИФРОВАН</h2>
-  <p>Тело контракта хранится в памяти терминала в виде шифротекста (AES-256-GCM).<br>Введите код доступа, выданный куратором. Без кода документ не существует.</p>
+  <p id="gateP">Тело контракта хранится в памяти терминала в виде шифротекста (AES-256-GCM).<br>Введите код доступа, выданный куратором ИИГ. Без кода документ не существует.</p>
   <input id="gatePass" type="password" placeholder="••••••••" autocomplete="off">
   <div class="btns center" style="margin-top:14px"><button class="act" id="gateBtn">⚿ Открыть документ</button></div>
   <div class="gateErr" id="gateErr"></div>
@@ -248,7 +244,7 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
 
 <section id="curator" class="hidden">
   <h2>РЕЖИМ КУРАТОРА · ГЕНЕРАТОР ЗАШИФРОВАННЫХ КОНТРАКТОВ</h2>
-  <div class="hint">1) Заполни поля. 2) Задай код доступа (передай исполнителю ОТДЕЛЬНО от ссылки!). 3) «ЗАШИФРОВАТЬ». 4) Скопируй готовый блок в CONFIG файла и удали там PLAIN — после этого в исходнике не останется ни слова текста контракта.</div>
+  <div class="hint">1) Заполни поля. 2) Задай код доступа (передай исполнителю ОТДЕЛЬНО от ссылки!). 3) «ЗАШИФРОВАТЬ». 4) Скопируй готовый блок в CONFIG файла и удали там PLAIN — после этого в исходнике не останется ни слова текста контракта. ВАЖНО: цензор уровня допуска применяется к ЛЮБЫМ словам ИИГ/ISG/полному имени в тексте — исполнитель с уровнем 1 их не увидит.</div>
   <label>DOC_ID (метка для БД)</label><input id="c_id">
   <label>Номер документа</label><input id="c_number">
   <label>Дата</label><input id="c_date">
@@ -258,7 +254,7 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
   <label>Пункты (каждый пункт с новой строки; можно &lt;b&gt;...&lt;/b&gt;)</label><textarea id="c_clauses" style="min-height:150px"></textarea>
   <label>Вознаграждение</label><textarea id="c_reward" style="min-height:40px"></textarea>
   <label>Срок действия</label><textarea id="c_deadline" style="min-height:40px"></textarea>
-  <label>Подписант</label><input id="c_sign">
+  <label>Подписант за ИИГ</label><input id="c_sign">
   <label>КОД ДОСТУПА (нигде не хранится!)</label><input id="c_pass" type="text" placeholder="напр.: PERIMETR-77">
   <div class="btns">
     <button class="act gold" id="c_encrypt">🔒 ЗАШИФРОВАТЬ (AES-256-GCM)</button>
@@ -273,10 +269,10 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
     <div id="paper">
       <div class="wm" id="wm"></div>
       <div class="p-head">
-        <div class="emb"><img data-emblem="emblem" src="emblem.png" alt=""></div>
-        <div class="org"><b class="org-name" id="docOrgName"></b><br>Международное научное подразделение изучения аномальных зон<br>Полевое управление · Сектор документирования<br><span id="orgPlace"></span></div>
+        <div class="emb" id="paperEmb"><img data-emblem="emblem" src="emblem.png" alt=""></div>
+        <div class="org" id="orgBlock"><b>ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)</b><br>Международное научное подразделение изучения аномальных зон<br>Полевое управление · Сектор документирования<br><span id="orgPlace"></span></div>
       </div>
-      <div class="p-meta"><span id="metaDate"></span><span id="metaPlace"></span><span id="docForm"></span></div>
+      <div class="p-meta"><span id="metaDate"></span><span id="metaPlace"></span><span id="metaForm">ФОРМА ИИГ-К/7 · СЕКРЕТНО</span></div>
       <h2 class="doc" id="docTitle"></h2>
       <div class="doc-num" id="docNum"></div>
       <p class="pre" id="docPre"></p>
@@ -285,11 +281,11 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
       <div class="signs">
         <div class="col">ИСПОЛНИТЕЛЬ (исследователь):<br><span id="signerPrint">____________________</span>
           <div class="sigline"><span class="hand" id="signHand"></span></div><small>подпись / расшифровка · дата подписания</small></div>
-        <div class="col" id="signOrgCol">ЗА <span id="iigSignLabel">ОРГАНИЗАЦИЮ</span>: <span id="iigSignatory"></span>
+        <div class="col">ЗА <span id="signOrgLbl">ИИГ</span>: <span id="iigSignatory"></span>
           <div class="sigline"><span class="hand show">Профессор</span></div><small>подпись уполномоченного представителя</small></div>
-        <div id="stampZone"><div id="stamp"><img data-emblem="emblem" src="emblem.png" alt="Печать"></div></div>
+        <div id="stampZone"><div id="stamp"><img data-emblem="emblem" src="emblem.png" alt="Печать ИИГ"></div></div>
       </div>
-      <div class="p-foot" id="docFoot"></div>
+      <div class="p-foot" id="docFoot">ДОКУМЕНТ СОСТАВЛЕН В ДВУХ ЭКЗЕМПЛЯРАХ · ПОСЛЕ ПОДПИСАНИЯ ОРИГИНАЛ УНИЧТОЖАЕТСЯ СОГЛАСНО ПРОТОКОЛУ ИИГ-П01</div>
     </div>
     <div id="charRing"></div><div id="glowRing"></div>
     <div id="lighter"><svg viewBox="0 0 74 120">
@@ -301,27 +297,27 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
       <path id="lflame2" d="M37,14 q5,7 3,12 q-2,4 -3,4 q-1,0 -3,-4 q-2,-5 3,-12 z" fill="#fff6d8" opacity="0"/>
       <rect x="12" y="44" width="50" height="62" rx="7" fill="#a8a396" stroke="#3c3831" stroke-width="2"/>
       <rect x="18" y="52" width="38" height="46" rx="4" fill="none" stroke="#6e6a5f" stroke-width="1.5"/>
-      <text x="37" y="80" font-size="13" font-family="Courier New" font-weight="700" fill="#6e0d15" text-anchor="middle">ИИГ</text>
+      <text id="lighterMark" x="37" y="80" font-size="13" font-family="Courier New" font-weight="700" fill="#6e0d15" text-anchor="middle">ИИГ</text>
     </svg></div>
     <div id="donePanel"><h3>КОНТРАКТ ПРИНЯТ · ОРИГИНАЛ УНИЧТОЖЕН</h3><p id="doneInfo"></p>
-      <p class="ok">ЗАПИСЬ ВНЕСЕНА В РЕЕСТР. ПОВТОРНЫЙ ДОСТУП К ТЕЛУ ДОКУМЕНТА ЗАКРЫТ.</p></div>
+      <p class="ok" id="doneOk">ЗАПИСЬ ВНЕСЕНА В РЕЕСТР ИИГ. ПОВТОРНЫЙ ДОСТУП К ТЕЛУ ДОКУМЕНТА ЗАКРЫТ.</p></div>
   </div>
   <section id="acceptBar">
     <div class="row"><label for="callsign">ПОЗЫВНОЙ / Ф.И.О. ИСПОЛНИТЕЛЯ:</label>
       <input id="callsign" maxlength="60" placeholder="напр.: Стрелков / Иванов И.И."></div>
     <div class="row"><label class="chk"><input type="checkbox" id="agree">
-      <span>Я ознакомлен(а) с условиями контракта, осведомлён(а) о рисках работы в Зоне и согласен(на) с протоколом уничтожения оригинала после подписания.</span></label></div>
+      <span id="chkSpan">Я ознакомлен(а) с условиями контракта, осведомлён(а) о рисках работы в Зоне и согласен(на) с протоколом уничтожения оригинала после подписания (ИИГ-П01).</span></label></div>
     <div class="btns"><button class="act" id="btnAccept" disabled>✒ Принять контракт</button>
       <button class="act gray" id="btnDecline">Отклонить</button>
       <button class="act" id="btnUpgrade" style="border-color:var(--amber);color:var(--amber)">⬆ Повысить допуск</button></div>
-    <div id="barNote">ВНИМАНИЕ: после принятия контракт заверяется печатью и сжигается согласно протоколу. Восстановление невозможно.</div>
+    <div id="barNote">ВНИМАНИЕ: после принятия контракт заверяется печатью ИИГ и сжигается согласно протоколу. Восстановление невозможно.</div>
   </section>
 </main>
 
 <section id="screenArchive" class="hidden">
   <div class="hole"></div>
   <h2>ДОСТУП К ТЕЛУ ДОКУМЕНТА ЗАКРЫТ</h2>
-  <p>Контракт принят к исполнению и уничтожен согласно протоколу.<br>Чтение, копирование и повторное подписание невозможны.</p>
+  <p id="archP">Контракт принят к исполнению и уничтожен согласно протоколу ИИГ-П01.<br>Чтение, копирование и повторное подписание невозможны.</p>
   <div id="recList"></div>
   <button id="copyBtnAdmin" class="hidden"> КУРАТОР: АРХИВНАЯ КОПИЯ (только чтение)</button>
 </section>
@@ -329,7 +325,7 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
 <div id="upgradePrompt">
   <div id="upgradeBox">
     <h3>ПОВЫШЕНИЕ УРОВНЯ ДОПУСКА</h3>
-    <p>Введите код повышения допуска, выданный уполномоченным представителем.<br>Текущий уровень: <b id="currentLevelDisplay">1</b></p>
+    <p>Введите код повышения допуска, выданный уполномоченным представителем.<br>Текущий уровень: <b id="currentLevelDisplay">3</b></p>
     <input id="upgradeCode" type="password" placeholder="КОД ПОВЫШЕНИЯ" autocomplete="off">
     <div class="btns center"><button class="act" id="upgradeConfirm">ПОДТВЕРДИТЬ</button><button class="act gray" id="upgradeCancel">ОТМЕНА</button></div>
     <div class="upgradeErr" id="upgradeErr"></div>
@@ -341,7 +337,7 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
   <button class="act gray" id="copyClose">Закрыть копию</button>
 </div>
 
-<footer id="ftr" class="hidden">ТЕРМИНАЛ КОНТРАКТОВ v2.1 · ЗОНА ОТЧУЖДЕНИЯ · ТОЛЬКО ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ
+<footer id="ftr" class="hidden"><span id="ftrTxt">ИИГ · ТЕРМИНАЛ КОНТРАКТОВ v2.1 · ЗОНА ОТЧУЖДЕНИЯ · ТОЛЬКО ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ</span>
   <br><button id="resetBtn" class="hidden">[ АДМИН: СБРОСИТЬ БД ]</button></footer>
 
 <script>
@@ -352,20 +348,56 @@ const CONFIG = {
   CIPHER: "OrsN2nUkpPoz4h1wprQ15/B2mXkkkAm09kDyq7b4/6ajFHXdy6AcJngTdXf0lveJSMYwoHhArwrdWB/mVnP+u+00uSWR/ERkPAXDPkCLp2wLpaorWH0KaExKyU4GqfufloPITdKOW5lqAj/cNWCxaZo0x+t8mhildZnrCjxcidmSh0FrSCUz3krNVIT6bZTgm2qqHBRjRQj1VmFF27FHPnvMqRmGU5E9AyohDtbpfjQbJKJcy0T59cGTTQ5QyXbwgs5ABIEDjOUQ+UKmwHnTRcAeud5TinQUWFAk13MDx57k+U/vvoAioCTOrF0llcAraeoK3cqPAaz7J/3KaJBUsbK4uh3i2W8eWiMT6a+IlaRJ75bxaM7wowff9VcD7Mro7Jyo0vIYVMn3RpVSTVDtIB9CBY/eKCWLSnIwqMH8ct4QI073p5bKDnXcqKqbekM16++6Qlkf2nTFg51MFKw8D6iqZBYcmhAnfwIscNEFDGKj//z97w4aQZ2j5F5RRLX4E+7VPNHiRimQxrsTGTQiL8xGLDDfviINf1VFSnwni5dJbHUPzs2BOPwC47sTYwJys+n+sBOJkO3LdmKSaxC1pFoP5wo+ENRV9uEwohl4SElcOIR1k57d/Kk1F2Hbn6yugl1mkB34i5/3enjJ7DaSuepNvV+zalVFitpytTEWgA3/w3S2NgQ8La3JFs7tLW9BRHdRnb7FLYe69oqWN1ZlSup7X4B0b4FTf3YY+SjwchoqsCTtnntAUjeYhf/kAZMrt7K7JQq9Lj3/x/cdwcevj5RRtEvaew/oFHEVT+rAXIqS6OyVMLi0HlWt9TXcjQJfarwOk6Ni9Tw5tA7V+VystL1j5FPqHJ/r/HvT22EFBMZfq1kB9wQN1hZLChrO+QwXy2k52ZLcV7LDa52KJAg99J2GxKNEAlFZY52h9PIX7Tdxg9kw64DW/I+4bZRnAunn2KwHcO1N0rqyXZE2nBPHmNbKZGFJyJ5nVAN03qPAIFIUjI8e6xu+MbDlIZdOegTAatR9I06Xl30XmO0Lesqaer0lm2N8lcLkIuPtYNz3rfhX6+s3Rbw4ZaXbCSTd3K3IJ56HLdZqhjeSNwqPdFu1s5HuE/4rvwaB+uZ7sSV+1njPKCAKQzi9Lp/phw9JOUqNXxJrkfYzkf+rpx6gh5ooXXBSm/HebtAhEKRWiUZrMF0F6W2qwLmmIlRh8fJV6D7/8AaTmKTCYFNX5pzmQJLrh68usQp310bvLDbcK9RT1n6DPP6nIvtTk6iCsuQYvM9UKkaDKxyKMG39peVyAQzet+8vfl3qkXu2jL1kg8v+57pQVO50oWrYyEoUcz8v0SwHb8a6rim7vHZFy6KYErpreETTg5oUMor86ztU2UlbwuFYSWmKZzf+vZJ2gyjdjm9WZGOVpEZYiwZ5EVkw6VcdeesV5dD85G98GrxkQTs2UXHAvS6INBTfHyJhKaBn5Y9lT8s4wyXdBxFPgVqyIruWH80np0lNTEbQzXQ/VXoTp6FtPTGlwOyoR3jcMcs1ZIl9Yr7MFgqxSkWcdRBRDMOMUcb5UippE7ctDVeyT0bt6VPZEfMPjo3alU9cbA24Z688AzUD68Ia2/5u8dsdzRM2+TOMBZ7h4TIq7/KPlaH7S5GI5CNkL+9uyHmf/wzfzL4Ksn6FHloOcaOe5fS9rp1Jj9tE/fGjJuvwHXRtjxBBxso738ZpLuXtxtiRrUz++HoPaFHYD/Q6a7Q1DWbgzyisdVwfrI1/ffv2CTYPBG4lwQ/6Hz75s6e2BXAaKx4egLslXXGpA2/7v8gbaIOGFCBKo1lsSzlgvUhbPAiDi9OP8jIGkoBwtl2LwMUr2I16vk1nWP5VfbWBYmD4Ko+UUElnX1kplY2Pj+me6zJLC0++L8ZKm8RQaO+1UkkL+tcKtVR3tkYTrgCEEiTyC/xIsi+cgCw2CgM2TmoimfWc2LGG3Kf9q/mIUTTsRstYi+GlrDSAF5JtQ09eulhZsA8QuN4PpNssqv/FdA2PfYHY6MzAXxEXheMcviEIMkzZdurkUqd7ZVgSFpW8kH0d782OCddxX2CjfU7dFJ25AQKoupomn/cxOmNArYMi7hUUxMpB99JWrzVAifblB8wHAqQUZ3+XrvzzQDsmcU+ui55pN+SGX9lrNy8xk3JQtMM3ezaThu+p7F9TCVURh4kmJpLfof0qxHe7UirLnGJnbheDHCUl1p1V8I0iGOMM7DSsa5k9N1rLU70GrYEeuAhXPBFx9pXWVaFKL8G6qpm3zS6Hw0Aj+AV6o0ajBpN8UAbUqaQnVsGzYXgwz65P/J6VaJZvyg6EWHxa7zv1nzJXu2vYN8EZxEcqJtNM4cLGvKU+/m8f2i8BLVu1IVupUXwYIuQkAi4rvggR8tbPFYzBY5FPkFsh6y5U5drdLW+iCIaqvSEnXRDu6F5XGoLE+Jl4TgwHdeCeRvTmgH1yN7yKUtxdd+T/GHccZLgNLWDbUcoSW+xU4GZiAZ9SJRNd/bwzS2/uZsFZZf5o055BcRe4obHAS63UFGF+2wGcOM5CpAyHHR1NpT6k5ZYBOfGloPBLg+k3tbtsvQuZAliDvNiBGKYyMGwi0S/uQYkRiO9RCEUep+oUgsbtqvhPCql+DrM5sVJHr4aF/oNoAnp5Kb+CDvK7LKzNE9cZfEJfOMmTbaEvS3HmD3GEOLakiI6eBnsi+/0yPP4y1dqF/fw3bYu0leQwPffSt3ws7Df4S7sd/Hyp9iUZ2oMqkpnsM3qKzEhDKRy4gEPNfBZww1nF04B+glNjkXTwhbLrcvbxoNgZOdMmoo34ujKdU8JpT2WF67HtEl57J7KIzONyDUm5jDFpU18s2F0TrWo4HzYhHWYgv5voP9m+HYIIO/CWT3c/JfmTz9qxv8pcdtBvGPwlYJZ4/hRHRUPxTGOngVfW2yIY6UA9i3SNqdZf/AkDQBE80qGdWjmnOraBG3/dSOHfgM5WQjpMvkuphbkrS3OdbwM8AVJVSNLun8SdRh8rSkDt9bAV6rpuIzlfbGrXty7tJX0LdrDyeakPNeU65oVD7LXxGczQU/6kPkEztqBJ5n+osAIXIPDHUmLeEUvADWnaV8cvKZAlhGkfs+44UKnTYFkw2cxL1gQ5wOYtdGI/lCDbhjtdxjKeFgvvilC9VERJOwzyTBe2aYOLzMWtNYqgkkUBkfEk5i5UqmqJjPy36bKez4RFrvaz/D+XDdj78Wgj2VhAnr7jFZMv82ipqhEy/W3RRCPHoDN4Kz+h0s7sCz1n0DnthePiJCFEyObt+ctTi2BCLvUnF+/3SZVUjhKBdR0EEKZShA6eMu+ohPDZO3/6k2tf+2NJOX5MGgtI6AprOuKoWOdihf19EtLt4RqMLMfThp5uPUfGcg4bEHUu5Kipe2agbv8qUH9RZbRMfAAoWqC7YPqzx4JkThJUJ3T4ezWVVKQIFlwcdeN/ptlOQu1Ddi3mjrA4S0b8iwEhYhnL5X/ryOTTgLBck67tiS21rP/+FqLxU4HA3ch7T1eP+UZGidCY4LnIwjIFK16DhHcw9/I1tVK5ad/+KyHEbnnnlFDvcFpoqJFlkCuPDLHDuwccxMNARoPb7Pa6pmA7r+tklyCpqmb9zlgt6vbk/Ph6f39y9PwNqCfgFCO7HLiAN6b1JpEv2PrKP6GYwBxp69TvHxdM8Ynj6Zqpdgw/F45t14oI2HS07nQaHLDA8YhAV0wxxWjF2Ic6BbB81KTVuBRRx8/p6nY8b8VzOEis/qcK4xBotJaqhhn7AI6J/o+e0BkrogkV3SOhzaqvAM9+XnYXJbQ4bz0OwNR8tMm/i2FITIDA1fM3boZzShdH8cGrvRRSTnt2JSUmPQ28vfi/2Ony7VCzb/oI/UfgVMNciRay6dPauWcuz3MYo2pBxrIYa/8ugJ0sQJpaUFTklkVwaS+mMjfcTMTpUYen0lxaW2e+i+s0mTw1YnKE36IWwXSdTBHqmrJgMepcJz6lFgg02q5ClEYCLPXg9k1G1bXUwc72bwHdC1pcJZXftCLKvZ5YhZUoPwbbyoJGxMpPQCDq4Ku95RjIWWnst4LWK0TweBMcxngIiyxFc2dHhSk+qZ8n3YDSgHI+vS66tq7ONpLj2T84tT093lhQO2El6J+yaidsgrzXOKOhSDYpgqJlW1+97mFpNHr+j6CXkbK8KMs0r6XkbrCpJdYasG+JYIybRGSrp43nWBfIOrE7g7LH2GYlJeJPaZijlxHeTkEOPlpkqh8kr+kJ9Q2E0B2n25g2ft9UF/WX+fkZePr0dse/JK1BGieQ/901dRJhwHsf87qvUEGOqXQvMcpUlcs2ISjsVS1v5xAHqfNIs8ArvxI6lhzBDVSsTbvY/RKKucOqKaGXfpw1JW80HPTQ3ej/jyE2KZUYHCrBXAdt2WL9Zu2M6HpL4IWUNr1KGvBicu2OYynNTqglZOPLNgmIRespdofQU8LQ6nPWio6E64qC8yCk5C2nJ4qyLDrvUFuszqUIhFyHZ+86YE7zx6qJH0qPdsFBjy+BCOPgy1j9vRkE5XYFX2unwGiY0WOnFdmzH9BLvBFzOmX8lMUJGeodcsbkPOhHEqMY4/wkz+bjhDZjCXZKHy+oDL1YN2faZ28REhaLa8Ws3a94ECllawhAifdJ5gpuqWR8peM+Ogtf9uY5kAMBNhO7eYPktkv0enRqQ0CtH95aB5s3nXhtiVPFmfFQCy/l4EcqeNlFYbLHqIqnL9Nmtp9uw7v2lgxR+cx/QaPtMCIakGADefilGfh5gYUIl1Ve0VRG7BqUQWFbspdsuReJ+gO7EPgLiNeVcqYKUR+ZqzaViTnbkXcPmhVSc6Gd2N9YXOpofcBl/9Tbq9S5UKg/mMPwj197T49U3JBbiA2TSdX5yUFaeQ9PJ+25Z/28aEtGHbdoG4bvGum9gLwUAtuQhB7EDuG2CNu5WWuNtF93jud3RokTcKdajdayDvnR0UrxvQkAhlvu+fVUOKRRgTbjGGUEd/u1dCz7V5vXjzhV+VkWR6DJ4+rZNnIZHDSEzzmgbDVUfO28J3YiNWKOSbEYfIMrgZsZoppaQkq5atGMARkMn/sIB1eQszNMW1gBvDa23dSaL+10mvtOZlAQbHU1V2yPTQKRt8/rSXByM9A5Mobwvsbc+wZb7NMSDPJ54JE3kCRTwQL+ie5qdXngOuCV2yHLPINgtwAHlQKWYCFvSHwV7QFxLD0JABxoEhjv+WsLtN5BkTk2VVDKztNhygD0LY3RyA3Oqkml14aILPQGtvKYwHqYOGhSgQA24e+NskKJRe/E8LVH3Ac1jY0ZJWRi9v46HJ4/b/nKkGs6UG0VGPCPKZABGu4Sn2O7l7Kq/SBfASdo3l/8KNvvb1EmznM4WcjjaH5hzmSKmqOuohvonYcwaeH+qyH4Nn7bCh834nH66hrGXjX+twF8negCaV8gb6RzVyRM0nl9QqQPbjT/PIEmtX6hpHacFfK5w3AD4mmRIOw5ESPo/Gzuyo+LwUmIcKKCtgeN0inv9sjTn01KE1NWlpUdxkkHBaMGBPuiWVSgJ/WqBmzctD1y+imiO46qlp0rpL7D5a8dqgspMNC8JoYxSQzy49jXEYt2+LASfOTEZfouKTOcJ+tc8LJZI5qSw3XOkH4yGM/lbWAOxvgvEi3t5AhYh1/5KH3Z9xtp1urT9pSDk0UC7sLytZKeSkXnbPmUbRK5CdvSlaw1tW//M7m6rwhh14G56augtWBWhq5zZV+EhH/2gV0juZLNKMBhfk/7dmHBrwDVPSgwcbYIdkqahnsnIjnxKzl6jTukBanRHsb4JLGKXxLi2qyJ3bfyyPDjtv0BBU69KJIiG+qGADPSuebwZJdstXRY5j4wnNLsiUB1NW7ieRq3Fj77FdEdQaZ/VjxbB34PWZtQs2Qe78yHUD/9oTrB4qA7+Msn7efmPz5KoItprb47+qSE+nsz6CP4aOtuazIlew19g3D3KA1Y1CBJGGG5iVGh6DapcVzB31UXQYa8pHBP0S7tovUDSMItSIwUlLoTFWMdAUjCW+7uTa1Rv72XfysKs40bHg7LSjoTljx70yqykt6wm/fIqzXy1Undqxp1x7hZtT645KNJkbeO0v8JyzIYPalvmFIU6gNsyN42xL8LR/hQXDfOJgTHxC/YMaatD1kF3bDIWRDJUnfMvVjqu+RcMjG8sTyRHv/0Wr3EkuT6Sj7thQ6zdG++/KtQsIRmORtH4y3drEHIBIC0k5MWrTWnr23uD2FBKAFQU55ZBdNDd73Qdg6r0V3VXOnRNPjNdQh87qftyEEn7h1LhZdSRDYgd7PdJeee5JaAxMGNIlSrbdlNNge0fZ6I/ON8jvqQ3vHzZatFzKz0lXPu+maPz3RWkchikpZ1emk43ykkgAEb0clnU5dJb5C2X9o66oSdEhg2934r6nJuXGQRcn04W8Ks+B9R4eZh/VIqMH0+57PWb0BF2xJD0u7rF6FFK482yACOIbnXuFzwhRfxDf6T3LPwdSUgPlUUbJ767nw5ID9SW1EWDO4MykicB/9vyyYCTYhbXZkwJDPhRJZnG7AiRca8hIeCrCKbjjCVGnxkGwycB9rh6AyKFor9ikVCojnPrb7JcJXczOVaiztPmLeTmcifGeiy40/MdtdrmmGXLEuZk0L1fyLrJONry8Z4SnU3Zev7uVEyWIXbysxpLA2MfG1bHINM9ni8zwreVDqevHauauv/Yg9snhk8Dd8bwI199cBj3d/zJgcNg3w5efsKtrmlv1q44NFg57gC6x5uZJViYQA3Q9YdknX+kO+JhLKrjunsCfalhKg5N6kYX7buioZd0BNQ68pae0x45ElqjxfCeUqpNE31uiC4IRmstUTK/Y7GBNKDKA/IvBwOXNgPW8rmLfS0gHHz8lMkjyMkQvF4h11ZZQ6rc8O60jWP5S2NyGKGeBfGZpWcYwvum9+KhsYtD/IvpQcKwIRX0sSgzMOVZnmjuZwW0locVrw0duhuCn7R+KW96Vl2DB6o88Y/Bn/Ao3QM/+63m4amR/2Jt9PgReGTCN1/jIa6QBonvSfgaFDrzHcnP/TpptwEB+otIF2ymVbnUNz6xZYwSlfbOyPhhSenFAr2HoHWvBRqxCJThQqNCZ5nOiC9Jk9TvdbXZSwbpArpKqX/7Cy4hfyVLjo/uA8QyWeDtKnpJQA731ML0WcwB257bAq3fsNFt+MS8LMGR3Ekb5kbAnNC+X8s69SsH/qLJ1tZn9J/S416N9HXxyhQZJd/tHxrTM6UbdVq7xp3azokyKjqoH10W7aVk9qtGgyGmG2Z9wq7JEOW1VqeyGlWOjTv01ZoGqId1pdXMaZcznnJpMhHoqe9aWM1t5N6tUAbliYiAZStVOQhhkXwbuQUPuIAE7YJ51UII9r33ngvAQmkvDre+LuatW+zhhABCAqYDjs4Pq+uExhNJ7Jwh+r0dadjUcBdPBb09lcEHLA4OQKlmXLHJCM8VFYSLPd2Y1iFVNn9Ktz7+iVzipGao4fMB9xeZhyNstHF/04TMt+mY1IhIpVdZRQxQ2WVdUsK0zicCrEGT50jZ9F8acMPdhzs3tNWQasuTMPQrkXytziFcN02SCve8K4nA4pqOM3/TpIF85rb8JlBjv7Em440EIrjmJx/nL1vhhDmp3fIkJLbGldmbMS+MPgU6mirQU6i8agQUZdVA1d6z++HXPIfDwdjiUrwMdxVsPbogZbUFXOiHlZrQi+AHFlW+HMrd6xksb/wUphZ0F0G7DQzgMyDKIDn7LVatSZIIrukF47F0xtzdJbSJ0sOjgJmv2AOinZcpV932CJahCuh4//yEmK5N1svy3CdLS1vEbxd4JFf1ZiIJjREqUDHFFEl2NHnBHjNM3M4aMsGjsX5n7D9xbuKxj75GDoatRA1dCk5LsyQksX+HthBTD7IwwTmf+M+kDa2tqku+br4zem+j+M+W5m/3rnkwYiUrDQ+1lcYFMSBr4cVRlJXQtHoDkswlR7ZlphLiYbGW28nnPGSfqN5NIqtpXzYl4NRrsphkYByIbbO97EgikHl0xL2uG1Vbm4bdTRZ/8NzB9wvzucWN1H6alVpehQBfbf040j1N19SlXNesbKBotpAMf+PfheGYm1FazdoCJbGQ7wK0kYzryTQa8eOIjfNLE7+Vvn3B4XfUp3YGsJPUGcmFZzLxTssDRarCfdQXyVJ6kytltAV+jBKyl4zSFzz8wPwtupXJXQcnYJOuIK7iW+B9hDo4b0/UcsGxJkPYoqsn9EShMFHopUUlE9ZnEnVswEZf07jRnpQZaEUIZDeg8B1SUUgXIgdvcfNbSxfAzdhWuEgiui1oEQsLHaOemO7Ob6+obLFHf5sowBWHZupGbd3+t+RDlTNAZVKx0jMOj0W8Xqtace0NXCppT+BRyLOXUoiyABJXgwGVucgRSOWR6wpAR03ZcBL1PXOQ0zGUJPYYXYA+Ww/65sJhlCYBxP+gzXfdcqFJMEoPYRJ4WZRy+OsFHiYo1CnQjEuBvKOQdGc325jirwUmXdPSs826txbg3lgvrsvo8+wTdvYdjkf4kEIC72xJskZSygisrfHGO90p32Q/WvKalHZakxRV30wIaLtM+xnypLmND8BmiuxIflEMVAQXa1xLBRNynpL6x6DQqw7xp/iox1OZacHTkJjAtpRUyfY5NRxlwTjpA5GySghRZMfZryp0i6PKuT7eHM16TuQVom+8cOQ69T2/g4fxnd8gYMTA9lCTx55ZwJ+wGU55J3PGrRC93VmznWINcF1+pAeoRzu5+q01wkLeIv4WVFARLz9lbLEuYhDWoTUsX4qTQxSZLgIw/wdGpzTnx5awr+Czq3bk1iFlkmhg65vEfXy182UaHhwlbvOB7nOVbtmw7tAwxCjc9TiG2nRTvGg2h/J9wJMyvAOXsaaR+vP4Ibn5p6glJg9QLgZmC6UyAsMNAE/MQurBv11AZblqRHLKjdiNB+/Voqo9/+7mPsq2HE0B1jScYp32P3LrJq/eZA2b5hZ1rgSFs3MBDd02vkSvKf+0pDFI8aPT34fHxi7Z1So2NiAVGuPSj3aTU+uJNVYw+GtI9UT4P8cmBy8m/ZM5yOsBxGkZcq3yGdRq6PZNBW65+h6r3BseOf6PscSSmuDmlO3K9shNh/I4haujjEmtA5Mx9WHHUvxIpvkiedzkuJ8w4gs5F2PQqyfsW5hAP8RFM99txYyW/7c+iu73hb5CcwBe1QCB2aBhfngHsuOLzUZD5H5ehOOpHSGOpDmk3HNtHLmJYM9lZx3lSjgR0eXl61/K26Ef+6ZKFZcYCrKJAXril0AXP51/0ponNy5SxikTNvSAvYGVPMMeMcH67TPbLSK7W/AUQathe17CiNqMPW5uEdP5lvOLwEtavhkcdVLgFpvgV9Z0/p5Q+6XdHJMqW8JkTJng5i46BS/wLL8owf8ZYKJKmQpZj6Ut4F31LmfxsNpW2yz7WNn0hmWoz/xTuPjnmoXVi9LcorlJp08er/7PvPd7H7tBTS6rrTLCzKFHJodXu5IbrnU1/ZUQzhNMqZZDr9VdvY9lhPsG4/yO/8wS2zslmCBAzMpzztNuknKibfyfACmSEZoH15xvtf6EA1ndlUhOwT8vPic1KxkXTSPrsakz2NNJl7P4X1cR2f4VBEwmnFOIJxhtNOCuTKwOVNGbb97qv1/Q/cymsCxOvJQLBFhaQvgIlWqBm/faQ0M8dqzKvXC44K+XiL2HnKePCwi5bFsHgu0LYi3bgQ2lNCLNNzBEvLr15DxPmyrPQ7wf5zGz6yn/8YQIh9Gd9o+nHlcox6eJCGSHTcvlkS++fvC5OLFoVvLw0tnb9sxor+mIxCAYul3LdC3DbXb2e0xiY36E1426EoIKb2a86qkCMp4UQixBV6EhxF1ByZQro8ZxxZJH/V3A2mjGUo5OdburMU0OGy4CnBBt1AWUCs9CNFYVnwqbVuPlnU5L/0hz4qjnWWv73wb5LxPjGqHJGxG2FLxpArtCm7squ91ZpXtjXRRlaMQF6sV6tM2OBojNoqtKUE7o5HbAf4wK/ZSbvqni1aqadmp4sOSNiwYdqHa8O8EWWzH4lxmIdBg+2PuZ1mDKMDQ5rzLA4UGMh1s+HqX37ZBf4oetN746kMkqE9QqeV25BFW00f+TyUDCkq6cWM2zQXDu3sT48YMiiup6sToRETITibMnShhrIH6VIcVqZCL0jYQ8LowGH4Kkrip1ptaWUDa0BFeDFaT2OgOixkLjJUMdWSrZD2mIJQIXkN1Rnxyf2BRUJGGWmcaJKJsQSydcEMH1WTW+ljoybB3eLYJharoqE8e8y1NNbUt/3npE1yy9xEw0LDLRdzV8kOZjaMNqata4WMVxU1+eVUy8nmp/qB9A70d53KUgz66yBBoAzZP9YoEC7X57sYZNHY6HX0h4E4dIB2O4sFLf6snF4/WkH/VTtiNOgyRY0iQfxtGmCITRHctnuptK0Z613pJbhjdo8z0lDna3WEwi/3k+b0UlRs4D2IvYa41IoerVWJGAjdQ4wPV2l+6X07OAuJ6faaxF6OzQs1qkXIvRvVQQNY2m4wnPv5v/fBE5vhOeUcmaLugIou4Tp+uc3PiENSvk6C98snmMdYUP6h0d56EWxbrmCNFktd4wgx5gcXg2aqi0DuVHhiccrov+NBA6m94NW2o/a7ltrQE2cmVlnGRSzWTV7R227gi5OZD5Vd3LfC/PEEKiRl48/qZjh5+Rz/Jm7AG7ZX3NfKCy9nPPKbksUIkoo311pogBobES+ZRXZS4V/GHhEKErpHN5z6zdYFX6lmAkR9bkDdDvVF1EYiH3m4xauPjUazCzGK75Qr/zINuPXFxtjrdL8whKJ7Hv9oba92BL4o4BAmocsI8wxn8w6S5WCfKYjCcIzPWjBZK3wzLhw0B+nmsVivMHP81MTSKCNv7DXKz40n1G9LJBVXroJvmxz6VMw4kGJLrcnl1Iy58KMckR43LkFKU90rFNPUq/EfD9e7Ol4eOyaWxKY+U/RL6RL3v+GHfj4S4Aix5soqdGErk0kTyQdO9jT9RAyCV0Odv9W3FgtiGG12OTTMCCWeca1rX4OgPuUazdzd+r/zMnv6Pafx7gRVX7j5kQi+uPaeaU4Ggw2QqLjDL5hTIK7690RDUXviRp9bbC8FwKaNPBx4UF77l2T8wnWbxPsOhSKYk0lc4MMn3rfJmoIqh48YIuVNK3+bmnTg3Ei6PrguJEQCl1IGOSgH8cv0hGb0gUhU90b8f8SJHSfVyvwq9ZNOC3If1c1sVGObHBI2zwecJN2j/P4ZF/emd3XGBtaTKi9NtdsBB3Kk4bAM1WzL9pj+/vdGm5d+poVkprTGfLgJV5wtyJrD6SdOVeQmM6L5C46qp47bqnalOAo8IJTa9E2dl5azwUxjKq5bqwkqdkZOHADVAWcnN2jWt7I9RFPNc5wSJrE8s6PwIdyCO1tkRjRcidExvWYSl3fOqBc50HtRTRVXMlNJzx46IgqpXghsTs2HIrPSB3MfW+6Ow0uYzwCUWzJE56F+u2SOmQR4deLFZUY0ALXskWXT+J85NQTQ5z2nSPq3KaqR7vUcKoAY5Zmkc2J22jcA152oSx8dBWyfplQYX2qmRMWp4/tWTPpq0e4zKzqAKc/f88V7BRFacvE5qeriOi4M8SF3ScZx58aUwu1wfonwoM1sJh6UEhqaYFEWmaymhwJLqVARLaciV7e2BKvTMxyEvC7FbJqaeXl/r94dLIFTr+Pq5Esa0a8Nt6FtXAEC+KRnnbM/7fhdWlARZOv1fAB/u4wOysYAfLKWMd5qf4/VJv/wuoL9JIdkv+/Vz2gTT1FNJEC/USqc0P4lHWdjCACTFZwCHJJ8KTPY85lWlawgy0WKdEx6j2TjuoHGJmUiah3necnutuMPaoYJz2BZRynypyAYdrWx1LhH+0cSxfQ9M8/uhmOsmVpVntBArEGoVEoCtLWSgvfXdhXlRIpccHaYJgexhtbBwDgAtrQYLbB08S1lONYu6F2/GK198z7hr0vY1RoHaqcOMNkE+i4a84WIX6oNFmxD19rvSYFOqxpM6ERv6yJnaev8hmb07pW2RG2SUCgRpcciHcmiKpu2ikxA00WygOfHSL0OxO12Yemn5b5hyWHkmRLJ6zfq2YIJ0JYHEELjHO7SSdCf69QpBGZsh3pL1+DYtWOrMIKAvFzdSHepQPeDo2lBRAjr5vgvXxFu6RqCpaVdLuP+7qaPuJ4ZrAC40qQLOT7Q9lvEps+NlelbZyWJkGC7w9/Q1fXqvHjb10ZKNWVZ9ArJWpzNSCInGVQO+5EDfwzsAD21u1V0hR0oBPLDqlkZw+oYRcjOVgPvWXVAQKDRLcc1w7qI61auSK720X/XEbzkPKWpTj8ICYXT1rVZFZcjSCDIOYKM31pVuO+AqhcyD67B3SR9xzqt4ZvUA2L57t0SFFZoK/5BW63v+BGQanqYLUt3u72tnvUvVVMpNbEz/JzWHIq78NmQOYYLd2n9TIUd+RF+MFnop+FoaKsGCZo1BPLz/6PA84NFc9XhZj7x/f8ZXfVtjrMwFbS6lNPnnTxvYvS2lIinq0nXUa18ptfTb41w3Lnchl7RCMTUegtY40jhZwvcNwu17US/R7QB5tR1noc4lFcPTooIAh+2S0FNqkQWXVu0puEZlpYm7St+x/mHTo+a3z/Nb6oVOHcIeWKJljW9W79i4wGTtcMIajsZI+UVtdE2DtJE4/xuOftOz1Nz39HySuotTXG/fqV1U88mM8wSrCw1gjrCzCCFaQHhjNovqkxd3T7pbr21fPypZDQWMFw==",
   PLAIN: null,
   API_URL: "",
-  UPGRADE_CODES: {
-    "LEVEL2": 2,
-    "LEVEL3": 3
-  }
+  UPGRADE_CODES: { "LEVEL2": 2, "LEVEL3": 3 }
+};
+
+/* Пресет контракта информатора (для куратора, предзаполнение) */
+const PRESET = {
+  id: "ISG-2014-002",
+  number: "ИИГ-ИНФ-002/09-2014",
+  date: "12 сентября 2014 г.",
+  place: "Расположение «???», «ЗТК»",
+  title: "КОНТРАКТ О КОНФИДЕНЦИАЛЬНОЙ ПЕРЕДАЧЕ ИНФОРМАЦИИ",
+  preamble: "Интернациональная Исследовательская Группа (далее — «Заказчик»), в лице уполномоченного представителя полевого подразделения (позывной «Неизвестный»), и субъект, указанный в разделе «Исполнитель» (далее — «Исполнитель», информатор), заключили настоящий Контракт о нижеследующем. Истинное наименование Заказчика засекречено для Исполнителя согласно уровню допуска настоящего документа. Исполнитель подтверждает, что осведомлён о возможных рисках и действует добровольно. Любое несанкционированное нарушение условий договора повлечёт за собой физическое устранение ответственного лица, нарушившего договор.",
+  clauses: [
+    "<b>Предмет контракта.</b> Исполнитель обязуется самостоятельно и за свой риск собирать и передавать Заказчику информацию, могущую представлять оперативную ценность: сведения о готовящихся, снаряжаемых и идущих походах (выходах) третьих сторон в Зону и в лабораторные комплексы — маршруты, сроки, состав, снаряжение и цели групп; данные об артефактах, аномалиях, мутантах и фрагментах «ОСКОЛ»; сведения о перемещениях патрулей ОКСОП и официальных научных групп; иную информацию, представляющую интерес для Заказчика. Исполнитель является информатором и действует под присвоенным Заказчиком псевдонимом.",
+    "<b>Порядок связи.</b> Связь поддерживается исключительно через контакт «Неизвестный» в КПК Исполнителя. Донесения передаются в свободной форме, без задержек. Подтверждение приёма — ответный сигнал «Сигнал принят». Сведения о готовящихся походах третьих сторон передаются НЕМЕДЛЕННО по факту их получения, не дожидаясь запроса Заказчика. Исполнитель не знает истинного наименования Заказчика и не вправе пытаться его установить, равно как и установить личность контакта «Неизвестный».",
+    "<b>Специальное оборудование.</b> Заказчик устанавливает в КПК Исполнителя инструмент «Прослушка» — комплекс перехвата и трансляции, работающий постоянно и в автоматическом режиме. Исполнитель обязан круглосуточно поддерживать КПК с «Прослушкой» во включённом состоянии: не выключать прибор, не вскрывать корпус, не снимать и не перепрошивать модуль, не передавать КПК третьим лицам и не предупреждать кого-либо о его существовании. Канал дуплексный: Заказчик получает информацию из окружения Исполнителя постоянно, в том числе без участия Исполнителя. Вмешательство в работу «Прослушки» приравнивается к измене.",
+    "<b>Утрата КПК и тяжёлое ранение.</b> При утрате, уничтожении КПК либо тяжёлом ранении, лишающем Исполнителя возможности пользоваться КПК, Исполнитель ОБЯЗАН не позднее 24 часов с момента появления физической возможности восстановить связь с Заказчиком любым доступным способом: резервная частота, посредники, тайник-сходняк, условный сигнал в согласованной точке. До момента восстановления связи контракт сохраняет силу. «Прослушка» в утерянном КПК переходит в автономный режим маяка: возврат прибора осуществляется силами Заказчика. Неявка на связь при физической возможности, а равно передача КПК третьим лицам, расценивается как измена с последствиями по п.7 настоящего контракта.",
+    "<b>Режим секретности и легенда.</b> Факт заключения контракта, контакт «Неизвестный» и наличие «Прослушки» не подлежат разглашению кому бы то ни было, включая других информаторов. Переписка с Заказчиком удаляется сразу после прочтения. В случае захвата, задержания или допроса третьими сторонами Исполнитель придерживается легенды: сотрудничество с «группой учёных, отколовшихся от НИИЧАЗ». Безопасность легенды Исполнитель обеспечивает самостоятельно.",
+    "<b>Протокол П-01.</b> Оригинал контракта после подписания заверяется печатью Организации и уничтожается термически в присутствии Исполнителя. Учёт ведётся только в защищённом реестре Заказчика. Восстановление оригинала невозможно.",
+    "<b>Ответственность.</b> Передача заведомо ложной информации, искажение сведений о походах, разглашение контракта либо попытка установления личности Заказчика влекут физическое устранение ответственного лица. Заказчик не несёт ответственности за потери Исполнителя, возникшие вследствие нарушения Исполнителем инструкций. Исполнитель принимает риски исполнения.",
+    "<b>Коррекция памяти.</b> При расторжении контракта либо консервации сотрудничества Исполнитель проходит процедуру коррекции памяти (амнезиак) по протоколу Заказчика, за исключением случаев продолжения сотрудничества по новому контракту. Подписывая настоящий контракт, Исполнитель даёт согласие на данную процедуру."
+  ],
+  reward: "ВОЗНАГРАЖДЕНИЕ: Выплата — по факту принятой информации: донесение о походе третьей стороны — приоритетная ставка; иные ценные данные — по оценке Заказчика. Выплата производится валютой либо контейнером чистой медицины, через тайник или посредников. Премия: сохранённый возврат КПК с «Прослушкой» при расторжении контракта.",
+  deadline: "<b>Срок действия.</b> Не более 30 суток с момента подписания. Продление — только по уведомлению от контакта «Неизвестный» в КПК. Досрочное прекращение — по решению Заказчика с обязательным возвратом КПК с «Прослушкой» через тайник.",
+  signatory: "проф. С. В., руководитель полевого подразделения"
 };
 
 const $=s=>document.querySelector(s);
 const Q=new URLSearchParams(location.search);
 const IS_ADMIN=Q.has('admin'), IS_CURATOR=Q.has('curator');
 let CONTRACT=null, soundOn=true, AC=null, busy=false;
-let currentLevel = parseInt(localStorage.getItem('clearance_level')) || 1;
+let currentLevel=parseInt(localStorage.getItem('clearance_level'))||3;
+{const p=parseInt(Q.get('clr')||Q.get('level'));if(p>=1&&p<=3){currentLevel=p;localStorage.setItem('clearance_level',p);}}
 const actx=()=>AC||(AC=new (window.AudioContext||window.webkitAudioContext)());
 function beep(f,d,type='square',g=.06){if(!soundOn)return;try{const a=actx(),o=a.createOscillator(),v=a.createGain();o.type=type;o.frequency.value=f;v.gain.setValueAtTime(g,a.currentTime);v.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.connect(v).connect(a.destination);o.start();o.stop(a.currentTime+d);}catch(e){}}
 function noise(d=.15,g=.08,fc=1800){if(!soundOn)return;try{const a=actx(),n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<n;i++)ch[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource(),v=a.createGain(),f=a.createBiquadFilter();s.buffer=b;f.type='bandpass';f.frequency.value=fc;v.gain.value=g;s.connect(f).connect(v).connect(a.destination);s.start();}catch(e){}}
+
+/* ===== ЦЕНЗОР ДОПУСКА: статичные чёрные квадраты █, без анимаций и таймеров ===== */
+const BLOCK='█';
+const blocks=n=>BLOCK.repeat(Math.min(n,64));
+const refreshRG=()=>{}; /* заглушка: анимации больше нет */
+const RE_ALL=/ИНТЕРНАЦИОНАЛЬНАЯ\s+ИССЛЕДОВАТЕЛЬСКАЯ\s+ГРУППА\s*\(ИИГ\)|ИНТЕРНАЦИОНАЛЬНАЯ\s+ИССЛЕДОВАТЕЛЬСКАЯ\s+ГРУППА|И\s?И\s?Г|\b(?:UNISG|ISG|IIG)\b/gi;
+const RE_FULL=/ИНТЕРНАЦИОНАЛЬНАЯ\s+ИССЛЕДОВАТЕЛЬСКАЯ\s+ГРУППА\s*(\(ИИГ\))?/gi;
+const RE_SPACED=/И\s+И\s+Г/g;
+const RE_LAT=/\b(?:UNISG|ISG|IIG)\b/gi;
+function maskHTML(s,lv){lv=lv==null?currentLevel:lv;if(lv>=3)return s;
+  if(lv===2)return s.replace(RE_FULL,'ИИГ').replace(RE_SPACED,'ИИГ').replace(RE_LAT,'ИИГ');
+  return s.replace(RE_ALL,m=>'<span class="rg">'+blocks(m.length)+'</span>');}
+function sanitizeStatic(s,lv){lv=lv==null?currentLevel:lv;if(lv>=3)return s;
+  if(lv===2)return s.replace(RE_FULL,'ИИГ').replace(RE_SPACED,'ИИГ').replace(RE_LAT,'ИИГ');
+  return s.replace(RE_ALL,m=>blocks(m.length));}
 
 const ENC=new TextEncoder(), DEC=new TextDecoder();
 const b64e=b=>{let s='';new Uint8Array(b).forEach(x=>s+=String.fromCharCode(x));return btoa(s);};
@@ -389,207 +421,95 @@ function deWhite(img){try{const w=img.naturalWidth,h=img.naturalHeight,c=documen
   const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(img,0,0);const d=x.getImageData(0,0,w,h),p=d.data;
   for(let i=0;i<p.length;i+=4){const lum=p[i]*.299+p[i+1]*.587+p[i+2]*.114;let a=255;if(lum>246)a=0;else if(lum>228)a=Math.round((246-lum)/18*255);if(a<p[i+3])p[i+3]=a;}
   x.putImageData(d,0,0);img.src=c.toDataURL('image/png');img.classList.add('nowb');}catch(e){if(img.dataset.emblem==='patch')img.classList.add('wb');}}
-function initEmblems(){document.querySelectorAll('img[data-emblem]').forEach(im=>{
-  im.src=im.dataset.emblem==='patch'?CONFIG.PATCH:CONFIG.EMBLEM;
-  im.addEventListener('error',()=>{const svg=$('#emblemTpl').content.firstElementChild.cloneNode(true);svg.style.width='100%';svg.style.height='100%';im.replaceWith(svg);},{once:true});
+let emblemSeq=0;
+/* эмблема: заглушённые дуги = статичная чёрная полоса █, вычисляется один раз */
+function emblemSVGFor(level){const n=$('#emblemTpl').content.firstElementChild.cloneNode(true);emblemSeq++;const s=emblemSeq;
+  n.innerHTML=n.innerHTML.replace(/id="arcT"/g,'id="arcT'+s+'"').replace(/id="arcB"/g,'id="arcB'+s+'"').replace(/href="#arcT"/g,'href="#arcT'+s+'"').replace(/href="#arcB"/g,'href="#arcB'+s+'"');
+  const tps=n.querySelectorAll('textPath');
+  if(tps[0]&&level<3){tps[0].textContent=blocks(tps[0].textContent.length);tps[0].setAttribute('fill','#000');}
+  if(tps[1]&&level<2){tps[1].textContent=blocks(tps[1].textContent.length);tps[1].setAttribute('fill','#000');}
+  return n;}
+function emblemImg(kind){const im=document.createElement('img');im.dataset.emblem=kind;im.alt=currentLevel===1?'':(kind==='patch'?'Эмблема':'Печать');
+  im.src=kind==='patch'?CONFIG.PATCH:CONFIG.EMBLEM;
+  im.addEventListener('error',()=>{im.replaceWith(emblemSVGFor(currentLevel));},{once:true});
   const proc=()=>{if(im.dataset.proc)return;im.dataset.proc=1;deWhite(im);};
-  if(im.complete&&im.naturalWidth)proc();else im.addEventListener('load',proc,{once:true});});
-  $('#wm').append($('#emblemTpl').content.firstElementChild.cloneNode(true));
-  }
+  if(im.complete&&im.naturalWidth)proc();else im.addEventListener('load',proc,{once:true});
+  return im;}
+function setupEmblems(level){
+  const pb=$('#patchBox'),ge=$('#gateEmb'),pe=$('#paperEmb'),wm=$('#wm'),st=$('#stamp');
+  if(level===1){pb.classList.add('hidden');ge.classList.add('hidden');pe.classList.add('hidden');
+    wm.innerHTML='';st.innerHTML='<div class="censorStamp">ЗАКАЗЧИК<br>[ДАННЫЕ ИЗЪЯТЫ]</div>';return;}
+  pb.classList.remove('hidden');ge.classList.remove('hidden');pe.classList.remove('hidden');
+  pb.innerHTML='';ge.innerHTML='';pe.innerHTML='';wm.innerHTML='';st.innerHTML='';
+  if(level===2){pb.append(emblemSVGFor(2));ge.append(emblemSVGFor(2));pe.append(emblemSVGFor(2));wm.append(emblemSVGFor(2));st.append(emblemSVGFor(2));}
+  else{pb.append(emblemImg('patch'));ge.append(emblemImg('patch'));pe.append(emblemImg('emblem'));wm.append(emblemSVGFor(3));st.append(emblemImg('emblem'));}}
 
-// === CLEARANCE LEVEL SYSTEM ===
-const GLITCH_CHARS = '░▒▓█╬╠╣╦╩◊◈◉⊕⊗⌬⌭⍟⎔⏣⏢┼├┤┬┴╔╗╚╝╟╢╫';
-let glitchIntervals = [];
+const REG_IDS=['orgTitle','orgBlock','metaForm','docFoot','signOrgLbl','gateP','chkSpan','barNote','doneOk','archP','ftrTxt'];
+function registerOrig(){REG_IDS.forEach(id=>{const el=$('#'+id);if(el&&!el.dataset.orig)el.dataset.orig=el.innerHTML;});}
+const ORIG_TITLE=document.title;
+function applyLevel(level){
+  currentLevel=level;localStorage.setItem('clearance_level',level);
+  REG_IDS.forEach(id=>{const el=$('#'+id);if(!el)return;
+    if(id==='orgBlock'&&level===1){el.innerHTML='<b>'+maskHTML('ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)',1)+'</b><br>Данные организации засекречены<br><span id="orgPlace"></span>';return;}
+    el.innerHTML=maskHTML(el.dataset.orig||el.innerHTML,level);});
+  $('#headerSub').textContent='ЗАЩИЩЁННЫЙ ТЕРМИНАЛ КОНТРАКТОВ · УРОВЕНЬ ДОПУСКА '+level;
+  document.querySelectorAll('.lvl-btn').forEach(b=>{const bl=+b.dataset.level;b.classList.toggle('active',bl===level);b.disabled=bl>level;});
+  $('#levelInfo').textContent={1:'БАЗОВЫЙ ДОСТУП · ЭМБЛЕМЫ И НАИМЕНОВАНИЯ ИЗЪЯТЫ · АВТОЦЕНЗОР АКТИВЕН',
+    2:'ОГРАНИЧЕННЫЙ ДОСТУП · ВИДНА АББРЕВИАТУРА · РАСШИФРОВКА ИЗЪЯТА',
+    3:'ПОЛНЫЙ ДОСТУП · ОГРАНИЧЕНИЙ НЕТ'}[level];
+  document.title=sanitizeStatic(ORIG_TITLE,level);
+  const lm=$('#lighterMark');
+  if(lm){if(level===1){lm.textContent='███';lm.setAttribute('fill','#000');}else{lm.textContent='ИИГ';lm.setAttribute('fill','#6e0d15');}}
+  setupEmblems(level);
+  $('#currentLevelDisplay').textContent=level;
+  if(CONTRACT&&!$('#screenContract').classList.contains('hidden'))renderTexts(CONTRACT);
+  refreshRG();beep(440+level*110,.1);}
 
-function createGlitchText(text) {
-  const span = document.createElement('span');
-  span.className = 'glitch-text';
-  const chars = [];
-  for (let i = 0; i < text.length; i++) {
-    const charSpan = document.createElement('span');
-    charSpan.className = 'glitch-char';
-    charSpan.textContent = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
-    charSpan.dataset.origLen = '1';
-    span.appendChild(charSpan);
-    chars.push(charSpan);
-  }
-  const interval = setInterval(() => {
-    chars.forEach(ch => {
-      ch.textContent = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
-    });
-  }, 80 + Math.random() * 60);
-  glitchIntervals.push(interval);
-  return span;
-}
-
-function clearGlitch() {
-  glitchIntervals.forEach(i => clearInterval(i));
-  glitchIntervals = [];
-}
-
-function getOrgName(level) {
-  if (level === 1) return 'glitch';
-  if (level === 2) return 'ИИГ';
-  return 'ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА';
-}
-
-function getOrgNameShort(level) {
-  if (level === 1) return 'glitch';
-  if (level === 2) return 'ИИГ';
-  return 'ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)';
-}
-
-function applyClearance(level) {
-  currentLevel = level;
-  localStorage.setItem('clearance_level', level);
-  clearGlitch();
-  
-  // Update header title
-  const titleEl = $('#orgTitle');
-  titleEl.innerHTML = '';
-  const orgName = getOrgName(level);
-  if (orgName === 'glitch') {
-    titleEl.appendChild(createGlitchText('ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА'));
-  } else {
-    titleEl.textContent = orgName;
-  }
-  
-  // Update header sub
-  $('#headerSub').textContent = `ЗАЩИЩЁННЫЙ ТЕРМИНАЛ КОНТРАКТОВ · УРОВЕНЬ ДОПУСКА ${level}`;
-  
-  // Update level buttons
-  document.querySelectorAll('.lvl-btn').forEach(btn => {
-    const btnLevel = parseInt(btn.dataset.level);
-    btn.classList.toggle('active', btnLevel === level);
-    btn.disabled = btnLevel > level;
-  });
-  
-  // Update level info
-  const infoTexts = {
-    1: 'БАЗОВЫЙ ДОСТУП · ВИДНА ТОЛЬКО ЭМБЛЕМА · НАИМЕНОВАНИЕ ЗАСЕКРЕЧЕНО',
-    2: 'ОГРАНИЧЕННЫЙ ДОСТУП · ВИДНА АББРЕВИАТУРА · РАСШИФРОВКА ЗАСЕКРЕЧЕНА',
-    3: 'ПОЛНЫЙ ДОСТУП · РАСШИФРОВКА ДОСТУПНА'
-  };
-  $('#levelInfo').textContent = infoTexts[level];
-  
-  // Update contract org name
-  const docOrgName = $('#docOrgName');
-  docOrgName.innerHTML = '';
-  const docOrgNameText = getOrgNameShort(level);
-  if (docOrgNameText === 'glitch') {
-    docOrgName.appendChild(createGlitchText('ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)'));
-  } else {
-    docOrgName.textContent = docOrgNameText;
-  }
-  
-  // Update sign org label
-  $('#iigSignLabel').textContent = level === 1 ? '[ЗАСЕКРЕЧЕНО]' : (level === 2 ? 'ИИГ' : 'ИИГ');
-  
-  // Update footer and form references
-  if (level === 1) {
-    $('#docForm').textContent = 'ФОРМА [ЗАСЕКРЕЧЕНО]-К/7 · СЕКРЕТНО';
-    $('#docFoot').textContent = 'ДОКУМЕНТ СОСТАВЛЕН В ДВУХ ЭКЗЕМПЛЯРАХ · ПОСЛЕ ПОДПИСАНИЯ ОРИГИНАЛ УНИЧТОЖАЕТСЯ СОГЛАСНО ПРОТОКОЛУ [ЗАСЕКРЕЧЕНО]-П01';
-  } else if (level === 2) {
-    $('#docForm').textContent = 'ФОРМА ИИГ-К/7 · СЕКРЕТНО';
-    $('#docFoot').textContent = 'ДОКУМЕНТ СОСТАВЛЕН В ДВУХ ЭКЗЕМПЛЯРАХ · ПОСЛЕ ПОДПИСАНИЯ ОРИГИНАЛ УНИЧТОЖАЕТСЯ СОГЛАСНО ПРОТОКОЛУ ИИГ-П01';
-  } else {
-    $('#docForm').textContent = 'ФОРМА ИИГ-К/7 · СЕКРЕТНО';
-    $('#docFoot').textContent = 'ДОКУМЕНТ СОСТАВЛЕН В ДВУХ ЭКЗЕМПЛЯРАХ · ПОСЛЕ ПОДПИСАНИЯ ОРИГИНАЛ УНИЧТОЖАЕТСЯ СОГЛАСНО ПРОТОКОЛУ ИИГ-П01';
-  }
-  
-  // Update current level display in upgrade prompt
-  $('#currentLevelDisplay').textContent = level;
-  
-  beep(440 + level * 110, 0.1);
-}
-
-function renderContract(C){
+function renderTexts(C){
   $('#orgPlace').textContent=C.place;
   $('#metaDate').textContent='ДАТА: '+C.date;
   $('#metaPlace').textContent='МЕСТО: '+C.place;
-  $('#docTitle').textContent=C.title;
-  $('#docNum').textContent='ДОКУМЕНТ '+C.number+' · ЭКЗ. №1 (ЕДИНСТВЕННЫЙ)';
-  $('#docPre').textContent=C.preamble;
-  $('#docClauses').innerHTML=C.clauses.map((t,i)=>`<div class="clause">${i+1}. ${t}</div>`).join('')+`<div class="clause">${C.clauses.length+1}. ${C.deadline}</div>`;
-  $('#rewardBox').innerHTML='<b>'+C.reward.split(':')[0]+':</b>'+C.reward.split(':').slice(1).join(':');
+  $('#docTitle').innerHTML=maskHTML(C.title);
+  $('#docNum').innerHTML=maskHTML('ДОКУМЕНТ '+C.number+' · ЭКЗ. №1 (ЕДИНСТВЕННЫЙ)');
+  $('#docPre').innerHTML=maskHTML(C.preamble);
+  $('#docClauses').innerHTML=C.clauses.map((t,i)=>`<div class="clause">${i+1}. ${maskHTML(t)}</div>`).join('')+`<div class="clause">${C.clauses.length+1}. ${maskHTML(C.deadline)}</div>`;
+  const rw=C.reward.split(':');
+  $('#rewardBox').innerHTML='<b>'+maskHTML(rw[0]+':')+'</b>'+maskHTML(rw.slice(1).join(':'));
   $('#iigSignatory').textContent=C.signatory;
-  applyClearance(currentLevel);
-}
+  refreshRG();}
 
 function docBodyHTML(C){
-  let svg=$('#emblemTpl').innerHTML.replace(/id="arcT"/g,'id="arcT2"').replace(/id="arcB"/g,'id="arcB2"').replace(/href="#arcT"/g,'href="#arcT2"').replace(/href="#arcB"/g,'href="#arcB2"');
-  const orgName = currentLevel === 1 ? '[ЗАСЕКРЕЧЕНО]' : (currentLevel === 2 ? 'ИИГ' : 'ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)');
-  const signLabel = currentLevel === 1 ? '[ЗАСЕКРЕЧЕНО]' : 'ИИГ';
-  const formLabel = currentLevel === 1 ? '[ЗАСЕКРЕЧЕНО]' : 'ИИГ';
-  return `<div class="p-head"><div class="emb" style="color:var(--red)">${svg}</div>
-  <div class="org"><b>${orgName}</b><br>${C.place}</div></div>
-  <div class="p-meta"><span>ДАТА: ${C.date}</span><span>ФОРМА ${formLabel}-К/7 · СЕКРЕТНО</span></div>
-  <h2 class="doc">${C.title}</h2><div class="doc-num">ДОКУМЕНТ ${C.number} · АРХИВНАЯ КОПИЯ</div>
-  <p class="pre">${C.preamble}</p>${C.clauses.map((t,i)=>`<div class="clause">${i+1}. ${t}</div>`).join('')}
-  <div class="clause">${C.clauses.length+1}. ${C.deadline}</div>
-  <div style="margin:14px 0;border:1px solid var(--red-d);background:rgba(163,22,33,.06);padding:9px 12px;font-size:11px"><b style="color:var(--red-d)">${C.reward.split(':')[0]}:</b>${C.reward.split(':').slice(1).join(':')}</div>
+  const emb=currentLevel===1?'':`<div class="emb" style="color:var(--red)">${emblemSVGFor(currentLevel).outerHTML}</div>`;
+  return `<div class="p-head">${emb}
+  <div class="org"><b>${maskHTML('ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)')}</b><br>${C.place}</div></div>
+  <div class="p-meta"><span>ДАТА: ${C.date}</span><span>${maskHTML('ФОРМА ИИГ-К/7 · СЕКРЕТНО')}</span></div>
+  <h2 class="doc">${maskHTML(C.title)}</h2><div class="doc-num">${maskHTML('ДОКУМЕНТ '+C.number+' · АРХИВНАЯ КОПИЯ')}</div>
+  <p class="pre">${maskHTML(C.preamble)}</p>${C.clauses.map((t,i)=>`<div class="clause">${i+1}. ${maskHTML(t)}</div>`).join('')}
+  <div class="clause">${C.clauses.length+1}. ${maskHTML(C.deadline)}</div>
+  <div style="margin:14px 0;border:1px solid var(--red-d);background:rgba(163,22,33,.06);padding:9px 12px;font-size:11px"><b style="color:var(--red-d)">${maskHTML(C.reward.split(':')[0]+':')}</b>${maskHTML(C.reward.split(':').slice(1).join(':'))}</div>
   <div class="signs"><div class="col">ИСПОЛНИТЕЛЬ:<div class="sigline"><span class="hand show">—</span></div></div>
-  <div class="col">ЗА ${signLabel}: ${C.signatory}<div class="sigline"><span class="hand show">Профессор</span></div></div></div>
+  <div class="col">ЗА ${maskHTML('ИИГ')}: ${C.signatory}<div class="sigline"><span class="hand show">Профессор</span></div></div></div>
   <div class="diag"><span>КОПИЯ · ОРИГИНАЛ УНИЧТОЖЕН<br>К ПОДПИСАНИЮ НЕ ДЕЙСТВИТЕЛЕН</span></div>`;}
 
 (function(){const cv=$('#embers');if(!cv)return;const cx=cv.getContext('2d');let W,H,P=[];const rs=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight};rs();addEventListener('resize',rs);
 for(let i=0;i<55;i++)P.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.6,s:Math.random()*.7+.25,o:Math.random()});
 (function loop(){cx.clearRect(0,0,W,H);for(const p of P){p.y-=p.s;p.x+=Math.sin(p.y/40)*.4;p.o+=.03;if(p.y<-10){p.y=H+10;p.x=Math.random()*W}
 cx.globalAlpha=.25+Math.abs(Math.sin(p.o))*.45;cx.fillStyle=Math.random()<.15?'#ff2d3f':'#ffb347';cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fill();}cx.globalAlpha=1;requestAnimationFrame(loop);})();})();
-const BOOT_LINES=['> ЗАЩИЩЁННЫЙ КАНАЛ СВЯЗИ v3.11','> ИНИЦИАЛИЗАЦИЯ ШИФРОВАНИЯ... AES-256-GCM','> ПРОВЕРКА УРОВНЯ ДОПУСКА... ['+currentLevel+'] ПОДТВЕРЖДЁН','> ЗАГРУЗКА РЕЕСТРА КОНТРАКТОВ...','> СЛЕДЫ ДЕЯТЕЛЬНОСТИ ЗАТИРАЮТСЯ АВТОМАТИЧЕСКИ'];
-function boot(cb){let li=0,ci=0,txt='';const pre=$('#bootTxt');(function tick(){if(li>=BOOT_LINES.length){let p=0;const iv=setInterval(()=>{p+=7;$('#bootBar').style.width=Math.min(p,100)+'%';if(p>=100){clearInterval(iv);setTimeout(()=>{$('#boot').classList.add('done');cb();},350);}},40);return;}
-const line=BOOT_LINES[li];if(ci<=line.length){pre.innerHTML=txt+line.slice(0,ci)+'<span class="cursor"></span>';ci++;setTimeout(tick,12+Math.random()*22);}else{txt+=line+'\n';li++;ci=0;setTimeout(tick,120);}})();}
+const BOOT_LINES=['> ИИГ // ЗАЩИЩЁННЫЙ КАНАЛ СВЯЗИ v3.11','> ИНИЦИАЛИЗАЦИЯ ШИФРОВАНИЯ... AES-256-GCM','> ПРОВЕРКА УРОВНЯ ДОПУСКА... [3] ПОДТВЕРЖДЁН','> ЗАГРУЗКА РЕЕСТРА КОНТРАКТОВ...','> СЛЕДЫ ДЕЯТЕЛЬНОСТИ ЗАТИРАЮТСЯ АВТОМАТИЧЕСКИ'];
+function boot(cb){const lines=BOOT_LINES.map(l=>sanitizeStatic(l.replace('[3]','['+currentLevel+']'),currentLevel));
+  let li=0,ci=0,txt='';const pre=$('#bootTxt');(function tick(){if(li>=lines.length){let p=0;const iv=setInterval(()=>{p+=7;$('#bootBar').style.width=Math.min(p,100)+'%';if(p>=100){clearInterval(iv);setTimeout(()=>{$('#boot').classList.add('done');cb();},350);}},40);return;}
+const line=lines[li];if(ci<=line.length){pre.innerHTML=txt+line.slice(0,ci)+'<span class="cursor"></span>';ci++;setTimeout(tick,12+Math.random()*22);}else{txt+=line+'\n';li++;ci=0;setTimeout(tick,120);}})();}
 setInterval(()=>{$('#statusLine').textContent=`КАНАЛ: ШИФРОВАН · СЕАНС: ${new Date().toLocaleTimeString('ru-RU')}`;},1000);
 
-// Level selector buttons
-document.querySelectorAll('.lvl-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const newLevel = parseInt(btn.dataset.level);
-    if (newLevel <= currentLevel) {
-      applyClearance(newLevel);
-    }
-  });
-});
-
-// Upgrade prompt
-$('#btnUpgrade').addEventListener('click', () => {
-  if (currentLevel >= 3) {
-    $('#barNote').textContent = 'МАКСИМАЛЬНЫЙ УРОВЕНЬ ДОПУСКА УЖЕ ДОСТИГНУТ.';
-    return;
-  }
-  $('#upgradePrompt').classList.add('show');
-  $('#upgradeCode').value = '';
-  $('#upgradeErr').textContent = '';
-  $('#upgradeCode').focus();
-});
-
-$('#upgradeCancel').addEventListener('click', () => {
-  $('#upgradePrompt').classList.remove('show');
-});
-
-$('#upgradeConfirm').addEventListener('click', () => {
-  const code = $('#upgradeCode').value.trim().toUpperCase();
-  if (CONFIG.UPGRADE_CODES[code] && CONFIG.UPGRADE_CODES[code] === currentLevel + 1) {
-    currentLevel++;
-    applyClearance(currentLevel);
-    $('#upgradePrompt').classList.remove('show');
-    beep(880, 0.15);
-    beep(1320, 0.2);
-  } else if (CONFIG.UPGRADE_CODES[code] && CONFIG.UPGRADE_CODES[code] > currentLevel + 1) {
-    $('#upgradeErr').textContent = 'ОШИБКА: код позволяет повысить допуск только на один уровень.';
-    beep(140, 0.2, 'sawtooth', 0.1);
-  } else {
-    $('#upgradeErr').textContent = 'ОТКАЗ: неверный код повышения допуска.';
-    beep(140, 0.25, 'sawtooth', 0.12);
-    document.body.classList.add('shake');
-    setTimeout(() => document.body.classList.remove('shake'), 400);
-  }
-});
-
-$('#upgradeCode').addEventListener('keydown', e => {
-  if (e.key === 'Enter') $('#upgradeConfirm').click();
-  if (e.key === 'Escape') $('#upgradeCancel').click();
-});
+document.querySelectorAll('.lvl-btn').forEach(b=>b.addEventListener('click',()=>{const nl=+b.dataset.level;if(nl<=currentLevel)applyLevel(nl);}));
+$('#btnUpgrade').addEventListener('click',()=>{if(currentLevel>=3){$('#barNote').innerHTML=maskHTML('МАКСИМАЛЬНЫЙ УРОВЕНЬ ДОПУСКА УЖЕ ДОСТИГНУТ.');return;}
+  $('#upgradePrompt').classList.add('show');$('#upgradeCode').value='';$('#upgradeErr').textContent='';$('#upgradeCode').focus();});
+$('#upgradeCancel').addEventListener('click',()=>$('#upgradePrompt').classList.remove('show'));
+$('#upgradeConfirm').addEventListener('click',()=>{const code=$('#upgradeCode').value.trim().toUpperCase();
+  if(CONFIG.UPGRADE_CODES[code]&&CONFIG.UPGRADE_CODES[code]===currentLevel+1){applyLevel(currentLevel+1);$('#upgradePrompt').classList.remove('show');beep(880,.15);beep(1320,.2);}
+  else if(CONFIG.UPGRADE_CODES[code]&&CONFIG.UPGRADE_CODES[code]>currentLevel+1){$('#upgradeErr').textContent='ОШИБКА: код позволяет повысить допуск только на один уровень.';beep(140,.2,'sawtooth',.1);}
+  else{$('#upgradeErr').textContent='ОТКАЗ: неверный код повышения допуска.';beep(140,.25,'sawtooth',.12);document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),400);}});
+$('#upgradeCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('#upgradeConfirm').click();if(e.key==='Escape')$('#upgradeCancel').click();});
 
 let tries=0;
 $('#gateBtn').addEventListener('click',async()=>{const pass=$('#gatePass').value;
@@ -599,10 +519,10 @@ $('#gateBtn').addEventListener('click',async()=>{const pass=$('#gatePass').value
   catch(e){tries++;document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),400);
     beep(140,.25,'sawtooth',.12);$('#gateErr').textContent='ОТКАЗ: неверный код доступа. Попыток с ошибками: '+tries;$('#gatePass').value='';}});
 $('#gatePass').addEventListener('keydown',e=>{if(e.key==='Enter')$('#gateBtn').click();});
-function showContract(){$('#screenContract').classList.remove('hidden');renderContract(CONTRACT);}
+function showContract(){$('#screenContract').classList.remove('hidden');renderTexts(CONTRACT);applyLevel(currentLevel);}
 
-function initCurator(){const P=CONFIG.PLAIN||{};const set=(id,v)=>$('#'+id).value=v||'';
-  set('c_id',CONFIG.DOC_ID);set('c_number',P.number);set('c_date',P.date);set('c_place',P.place);set('c_title',P.title);
+function initCurator(){const P=CONFIG.PLAIN||PRESET;const set=(id,v)=>$('#'+id).value=v||'';
+  set('c_id',CONFIG.PLAIN?CONFIG.DOC_ID:PRESET.id);set('c_number',P.number);set('c_date',P.date);set('c_place',P.place);set('c_title',P.title);
   set('c_pre',P.preamble);set('c_clauses',(P.clauses||[]).join('\n'));set('c_reward',P.reward);set('c_deadline',P.deadline);set('c_sign',P.signatory);
   $('#c_encrypt').addEventListener('click',async()=>{const pass=$('#c_pass').value.trim();
     if(pass.length<4){alert('Код доступа: минимум 4 символа.');return;}
@@ -622,7 +542,8 @@ $('#btnAccept').addEventListener('click',()=>{if(busy||!valid())return;busy=true
   const signer=$('#callsign').value.trim();
   const rec={id:CONFIG.DOC_ID,number:CONTRACT.number,signer,ts:Date.now(),status:'ПРИНЯТ · ОРИГИНАЛ СОЖЖЁН'};
   dbPut(rec);
-  $('#btnAccept').disabled=true;$('#btnDecline').disabled=true;$('#btnUpgrade').disabled=true;$('#barNote').textContent='ПРОТОКОЛ УНИЧТОЖЕНИЯ ЗАПУЩЕН...';
+  $('#btnAccept').disabled=true;$('#btnDecline').disabled=true;$('#btnUpgrade').disabled=true;
+  $('#barNote').innerHTML=maskHTML('ПРОТОКОЛ ИИГ-П01 ЗАПУЩЕН...');refreshRG();
   $('#signerPrint').textContent=signer;
   setTimeout(()=>{$('#stamp').classList.add('slam');document.body.classList.add('shake');beep(70,.25,'sine',.2);noise(.12,.12,300);setTimeout(()=>document.body.classList.remove('shake'),400);},500);
   setTimeout(()=>{const h=$('#signHand');h.textContent=signer;h.classList.add('show');beep(880,.05);beep(660,.06);},1300);
@@ -650,7 +571,7 @@ function burn(rec){const paper=$('#paper'),box=$('#paperBox'),ch=$('#charRing'),
     if(t-lastFlame>55&&k<1){lastFlame=t;const a=Math.random()*Math.PI*2,r=R*(.85+Math.random()*.2);
       const f=document.createElement('div');f.className='flame';f.style.left=(bx+Math.cos(a)*r-12)+'px';f.style.top=(by+Math.sin(a)*r-28)+'px';box.appendChild(f);setTimeout(()=>f.remove(),420+Math.random()*250);}
     if(k<1)requestAnimationFrame(frame);else finish();})(t0);
-  function finish(){clearInterval(crack);clearGlitch();
+  function finish(){clearInterval(crack);
     paper.classList.add('collapsed');ch.style.opacity=0;gl.style.opacity=0;
     document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),400);
     for(let i=0;i<46;i++){const a=document.createElement('div');a.className='ash';
@@ -660,33 +581,34 @@ function burn(rec){const paper=$('#paper'),box=$('#paperBox'),ch=$('#charRing'),
     $('#lighter').classList.remove('show','touch');$('#burnGlow').classList.remove('on');
     CONTRACT=null;
     setTimeout(()=>{paper.innerHTML='';},1300);
-    setTimeout(()=>{$('#doneInfo').innerHTML=`КОНТРАКТ ${rec.number}<br>ИСПОЛНИТЕЛЬ: <b style="color:#ffb347">${rec.signer}</b><br>ВРЕМЯ УНИЧТОЖЕНИЯ: ${new Date(rec.ts).toLocaleString('ru-RU')}`;
-      $('#donePanel').classList.add('show');beep(520,.15,'sine',.08);beep(780,.25,'sine',.08);},1300);}}
+    setTimeout(()=>{$('#doneInfo').innerHTML=`КОНТРАКТ ${maskHTML(rec.number)}<br>ИСПОЛНИТЕЛЬ: <b style="color:#ffb347">${rec.signer}</b><br>ВРЕМЯ УНИЧТОЖЕНИЯ: ${new Date(rec.ts).toLocaleString('ru-RU')}`;
+      $('#donePanel').classList.add('show');refreshRG();beep(520,.15,'sine',.08);beep(780,.25,'sine',.08);},1300);}}
 
 function showArchive(){$('#screenContract').classList.add('hidden');$('#gate').classList.add('hidden');
   $('#screenArchive').classList.remove('hidden');
-  $('#recList').innerHTML=dbLoad().records.map(r=>`<div class="recCard"><b>РЕЕСТР · ЗАПИСЬ ОБ УНИЧТОЖЕНИИ</b><br>Документ: ${r.number}<br>Исполнитель: ${r.signer}<br>Статус: ${r.status}</div>`).join('');
+  $('#recList').innerHTML=dbLoad().records.map(r=>`<div class="recCard"><b>${maskHTML('РЕЕСТР ИИГ · ЗАПИСЬ ОБ УНИЧТОЖЕНИИ')}</b><br>Документ: ${maskHTML(r.number)}<br>Исполнитель: ${r.signer}<br>Статус: ${r.status}</div>`).join('');
+  refreshRG();
   if(IS_ADMIN)$('#copyBtnAdmin').classList.remove('hidden');}
 $('#copyBtnAdmin').addEventListener('click',()=>{
   if(!CONFIG.CIPHER){
     if(!CONFIG.PLAIN){alert('Нет данных: CIPHER пуст и PLAIN отключён.');return;}
     $('#copyPaper').innerHTML=docBodyHTML(CONFIG.PLAIN);
-    $('#copyOverlay').classList.add('show');beep(660,.1);return;}
+    $('#copyOverlay').classList.add('show');refreshRG();beep(660,.1);return;}
   const pass=prompt('Код доступа куратора для расшифровки архивной копии:');if(!pass)return;
   decryptJSON(CONFIG.CIPHER,pass)
-    .then(C=>{$('#copyPaper').innerHTML=docBodyHTML(C);$('#copyOverlay').classList.add('show');beep(660,.1);})
+    .then(C=>{$('#copyPaper').innerHTML=docBodyHTML(C);$('#copyOverlay').classList.add('show');refreshRG();beep(660,.1);})
     .catch(()=>alert('Отказ: неверный код доступа.'));});
 $('#copyClose').addEventListener('click',()=>{$('#copyOverlay').classList.remove('show');$('#copyPaper').innerHTML='';});
 
-boot(()=>{$('#hdr').classList.remove('hidden');$('#ftr').classList.remove('hidden');initEmblems();
-  applyClearance(currentLevel);
+boot(()=>{$('#hdr').classList.remove('hidden');$('#ftr').classList.remove('hidden');
+  registerOrig();applyLevel(currentLevel);
   if(IS_ADMIN)$('#resetBtn').classList.remove('hidden');
   if(IS_CURATOR){initCurator();$('#curator').classList.remove('hidden');return;}
   if(dbFind(CONFIG.DOC_ID)){showArchive();return;}
   if(CONFIG.CIPHER){$('#gate').classList.remove('hidden');}
   else if(CONFIG.PLAIN){CONTRACT=CONFIG.PLAIN;$('#demoWarn').classList.remove('hidden');showContract();}
   else{$('#gate').classList.remove('hidden');$('#gateErr').textContent='НЕТ ДАННЫХ: CIPHER пуст и PLAIN отключён.';}});
-$('#resetBtn').addEventListener('click',()=>{if(confirm('Сбросить БД контрактов на этом устройстве?')){localStorage.removeItem(DB_KEY);location.href=location.pathname;}});
+$('#resetBtn').addEventListener('click',()=>{if(confirm(sanitizeStatic('Сбросить БД контрактов ИИГ на этом устройстве?',currentLevel))){localStorage.removeItem(DB_KEY);location.href=location.pathname;}});
 $('#sndBtn').addEventListener('click',()=>{soundOn=!soundOn;$('#sndBtn').textContent='ЗВУК: '+(soundOn?'ВКЛ':'ВЫКЛ');});
 </script>
 </body>
