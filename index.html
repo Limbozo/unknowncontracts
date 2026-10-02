@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ИИГ // Защищённый терминал контрактов</title>
+<title>Защищённый терминал контрактов</title>
 <style>
 :root{
   --red:#a31621; --red-d:#6e0d15; --red-glow:#ff2d3f;
@@ -37,6 +37,12 @@ body.shake{animation:shake .35s linear}
 .cursor{display:inline-block;width:9px;height:16px;background:var(--red-glow);vertical-align:-2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 
+/* GLITCH TEXT EFFECT */
+.glitch-text{display:inline-block;color:var(--red-glow);text-shadow:0 0 10px rgba(255,45,63,.6);letter-spacing:.15em;font-family:var(--mono)}
+.glitch-text::selection{background:var(--red);color:var(--bg)}
+.glitch-char{display:inline-block;animation:charGlitch 0.15s infinite}
+@keyframes charGlitch{0%,100%{opacity:1}50%{opacity:0.7}}
+
 header{position:relative;z-index:5;text-align:center;padding:30px 16px 8px;animation:fadeDown 1s both}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:none}}
 #patchBox{width:128px;height:128px;margin:0 auto 12px;position:relative;animation:hover 6s ease-in-out infinite}
@@ -44,11 +50,19 @@ header{position:relative;z-index:5;text-align:center;padding:30px 16px 8px;anima
 #patchBox img,#patchBox svg{width:100%;height:100%;object-fit:contain;border-radius:50%}
 #patchBox img.nowb{filter:drop-shadow(0 0 12px rgba(163,22,33,.5))}
 #patchBox img.wb{background:#f6f3ec;box-shadow:0 0 0 3px var(--red),0 0 22px rgba(163,22,33,.55)}
-h1{color:var(--red-glow);font-size:clamp(15px,3vw,26px);letter-spacing:.4em;font-weight:700;text-shadow:0 0 12px rgba(255,45,63,.5);animation:glitch 7s infinite}
+h1{color:var(--red-glow);font-size:clamp(15px,3vw,26px);letter-spacing:.4em;font-weight:700;text-shadow:0 0 12px rgba(255,45,63,.5);animation:glitch 7s infinite;min-height:1.2em}
 @keyframes glitch{0%,92%,100%{text-shadow:0 0 12px rgba(255,45,63,.5)}93%{text-shadow:-3px 0 #0ff,3px 0 var(--red-glow)}94%{text-shadow:3px 0 #0ff,-3px 0 var(--red-glow)}}
 header .sub{margin-top:7px;font-size:11px;letter-spacing:.3em;color:var(--steel)}
 header .status{margin-top:8px;font-size:11px;color:var(--amber);letter-spacing:.12em}
 #sndBtn{position:fixed;top:12px;right:14px;z-index:65;background:none;border:1px solid var(--red);color:var(--red-glow);font-family:var(--mono);font-size:11px;padding:6px 10px;cursor:pointer;letter-spacing:.15em}
+
+/* LEVEL SELECTOR */
+#levelSelector{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.lvl-btn{background:none;border:1px solid var(--red-d);color:var(--red-glow);font-family:var(--mono);font-size:10px;padding:8px 14px;cursor:pointer;letter-spacing:.1em;transition:.2s}
+.lvl-btn:hover{background:rgba(163,22,33,.3);box-shadow:0 0 12px rgba(255,45,63,.4)}
+.lvl-btn.active{background:rgba(163,22,33,.5);border-color:var(--red-glow);box-shadow:0 0 16px rgba(255,45,63,.5)}
+.lvl-btn:disabled{opacity:.4;cursor:not-allowed}
+#levelInfo{margin-top:10px;font-size:9px;color:#6b5b48;letter-spacing:.08em;text-align:center}
 
 main{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;padding:22px 14px 50px}
 #paperBox{position:relative;width:min(640px,94vw)}
@@ -74,6 +88,7 @@ main{position:relative;z-index:5;display:flex;flex-direction:column;align-items:
 .p-head .emb svg{width:100%}
 .p-head .org{font-size:10.5px;line-height:1.5;letter-spacing:.03em;text-transform:uppercase}
 .p-head .org b{font-size:11.5px;letter-spacing:.12em;color:var(--red-d)}
+.p-head .org .org-name{min-height:1.2em}
 .p-meta{display:flex;justify-content:space-between;gap:10px;font-size:10.5px;margin-top:8px;flex-wrap:wrap}
 h2.doc{margin:18px 0 4px;text-align:center;font-size:14px;letter-spacing:.12em;color:var(--red-d);text-transform:uppercase}
 .doc-num{text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--ink);margin-bottom:14px}
@@ -136,6 +151,17 @@ button.act.gray{border-color:#55504a;color:#9a938a;background:none}
 #gatePass{width:100%;background:#140b0b;border:1px solid var(--red-d);color:var(--amber);font-family:var(--mono);font-size:16px;letter-spacing:.35em;text-align:center;padding:10px;outline:none}
 #gatePass:focus{border-color:var(--red-glow);box-shadow:0 0 14px rgba(255,45,63,.4)}
 .gateErr{min-height:20px;margin-top:10px;font-size:11px;color:var(--red-glow);letter-spacing:.1em}
+
+/* UPGRADE PROMPT */
+#upgradePrompt{position:fixed;inset:0;z-index:75;background:rgba(5,4,3,.94);display:none;align-items:center;justify-content:center;padding:20px}
+#upgradePrompt.show{display:flex}
+#upgradeBox{width:min(480px,94vw);border:1px solid var(--red);background:rgba(18,9,9,.95);padding:28px 24px;text-align:center;box-shadow:0 0 40px rgba(163,22,33,.3) inset}
+#upgradeBox h3{color:var(--red-glow);font-size:14px;letter-spacing:.24em;margin-bottom:14px}
+#upgradeBox p{font-size:11px;line-height:1.8;margin-bottom:16px;color:var(--steel)}
+#upgradeCode{width:100%;background:#140b0b;border:1px solid var(--red-d);color:var(--amber);font-family:var(--mono);font-size:14px;letter-spacing:.3em;text-align:center;padding:10px;outline:none;margin-bottom:12px}
+#upgradeCode:focus{border-color:var(--red-glow);box-shadow:0 0 14px rgba(255,45,63,.4)}
+.upgradeErr{min-height:20px;margin-top:8px;font-size:11px;color:var(--red-glow)}
+
 #demoWarn{width:min(640px,94vw);margin:14px auto 0;border:1px dashed var(--amber);color:var(--amber);font-size:10.5px;padding:8px 12px;text-align:center;letter-spacing:.08em}
 
 #screenArchive{position:relative;z-index:5;max-width:700px;margin:36px auto;padding:0 16px;text-align:center;animation:fadeUp .8s both}
@@ -199,16 +225,22 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
 </template>
 
 <header id="hdr" class="hidden">
-  <div id="patchBox"><img data-emblem="patch" src="patch.png" alt="Эмблема ИИГ"></div>
-  <h1>ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА</h1>
-  <div class="sub">ЗАЩИЩЁННЫЙ ТЕРМИНАЛ КОНТРАКТОВ · УРОВЕНЬ ДОПУСКА 3</div>
+  <div id="patchBox"><img data-emblem="patch" src="patch.png" alt="Эмблема"></div>
+  <h1 id="orgTitle"></h1>
+  <div class="sub" id="headerSub"></div>
   <div class="status" id="statusLine">КАНАЛ: ШИФРОВАН · СЕАНС: —</div>
+  <div id="levelSelector">
+    <button class="lvl-btn" data-level="1" id="lvl1">УРОВЕНЬ 1</button>
+    <button class="lvl-btn" data-level="2" id="lvl2">УРОВЕНЬ 2</button>
+    <button class="lvl-btn" data-level="3" id="lvl3">УРОВЕНЬ 3</button>
+  </div>
+  <div id="levelInfo"></div>
 </header>
 
 <section id="gate" class="hidden">
   <div class="gEmb" id="gateEmb"><img data-emblem="patch" src="patch.png" alt=""></div>
   <h2>ДОКУМЕНТ ЗАШИФРОВАН</h2>
-  <p>Тело контракта хранится в памяти терминала в виде шифротекста (AES-256-GCM).<br>Введите код доступа, выданный куратором ИИГ. Без кода документ не существует.</p>
+  <p>Тело контракта хранится в памяти терминала в виде шифротекста (AES-256-GCM).<br>Введите код доступа, выданный куратором. Без кода документ не существует.</p>
   <input id="gatePass" type="password" placeholder="••••••••" autocomplete="off">
   <div class="btns center" style="margin-top:14px"><button class="act" id="gateBtn">⚿ Открыть документ</button></div>
   <div class="gateErr" id="gateErr"></div>
@@ -226,7 +258,7 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
   <label>Пункты (каждый пункт с новой строки; можно &lt;b&gt;...&lt;/b&gt;)</label><textarea id="c_clauses" style="min-height:150px"></textarea>
   <label>Вознаграждение</label><textarea id="c_reward" style="min-height:40px"></textarea>
   <label>Срок действия</label><textarea id="c_deadline" style="min-height:40px"></textarea>
-  <label>Подписант за ИИГ</label><input id="c_sign">
+  <label>Подписант</label><input id="c_sign">
   <label>КОД ДОСТУПА (нигде не хранится!)</label><input id="c_pass" type="text" placeholder="напр.: PERIMETR-77">
   <div class="btns">
     <button class="act gold" id="c_encrypt">🔒 ЗАШИФРОВАТЬ (AES-256-GCM)</button>
@@ -242,9 +274,9 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
       <div class="wm" id="wm"></div>
       <div class="p-head">
         <div class="emb"><img data-emblem="emblem" src="emblem.png" alt=""></div>
-        <div class="org"><b>ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)</b><br>Международное научное подразделение изучения аномальных зон<br>Полевое управление · Сектор документирования<br><span id="orgPlace"></span></div>
+        <div class="org"><b class="org-name" id="docOrgName"></b><br>Международное научное подразделение изучения аномальных зон<br>Полевое управление · Сектор документирования<br><span id="orgPlace"></span></div>
       </div>
-      <div class="p-meta"><span id="metaDate"></span><span id="metaPlace"></span><span>ФОРМА ИИГ-К/7 · СЕКРЕТНО</span></div>
+      <div class="p-meta"><span id="metaDate"></span><span id="metaPlace"></span><span id="docForm"></span></div>
       <h2 class="doc" id="docTitle"></h2>
       <div class="doc-num" id="docNum"></div>
       <p class="pre" id="docPre"></p>
@@ -253,11 +285,11 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
       <div class="signs">
         <div class="col">ИСПОЛНИТЕЛЬ (исследователь):<br><span id="signerPrint">____________________</span>
           <div class="sigline"><span class="hand" id="signHand"></span></div><small>подпись / расшифровка · дата подписания</small></div>
-        <div class="col">ЗА ИИГ: <span id="iigSignatory"></span>
+        <div class="col" id="signOrgCol">ЗА <span id="iigSignLabel">ОРГАНИЗАЦИЮ</span>: <span id="iigSignatory"></span>
           <div class="sigline"><span class="hand show">Профессор</span></div><small>подпись уполномоченного представителя</small></div>
-        <div id="stampZone"><div id="stamp"><img data-emblem="emblem" src="emblem.png" alt="Печать ИИГ"></div></div>
+        <div id="stampZone"><div id="stamp"><img data-emblem="emblem" src="emblem.png" alt="Печать"></div></div>
       </div>
-      <div class="p-foot">ДОКУМЕНТ СОСТАВЛЕН В ДВУХ ЭКЗЕМПЛЯРАХ · ПОСЛЕ ПОДПИСАНИЯ ОРИГИНАЛ УНИЧТОЖАЕТСЯ СОГЛАСНО ПРОТОКОЛУ ИИГ-П01</div>
+      <div class="p-foot" id="docFoot"></div>
     </div>
     <div id="charRing"></div><div id="glowRing"></div>
     <div id="lighter"><svg viewBox="0 0 74 120">
@@ -272,33 +304,44 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
       <text x="37" y="80" font-size="13" font-family="Courier New" font-weight="700" fill="#6e0d15" text-anchor="middle">ИИГ</text>
     </svg></div>
     <div id="donePanel"><h3>КОНТРАКТ ПРИНЯТ · ОРИГИНАЛ УНИЧТОЖЕН</h3><p id="doneInfo"></p>
-      <p class="ok">ЗАПИСЬ ВНЕСЕНА В РЕЕСТР ИИГ. ПОВТОРНЫЙ ДОСТУП К ТЕЛУ ДОКУМЕНТА ЗАКРЫТ.</p></div>
+      <p class="ok">ЗАПИСЬ ВНЕСЕНА В РЕЕСТР. ПОВТОРНЫЙ ДОСТУП К ТЕЛУ ДОКУМЕНТА ЗАКРЫТ.</p></div>
   </div>
   <section id="acceptBar">
     <div class="row"><label for="callsign">ПОЗЫВНОЙ / Ф.И.О. ИСПОЛНИТЕЛЯ:</label>
       <input id="callsign" maxlength="60" placeholder="напр.: Стрелков / Иванов И.И."></div>
     <div class="row"><label class="chk"><input type="checkbox" id="agree">
-      <span>Я ознакомлен(а) с условиями контракта, осведомлён(а) о рисках работы в Зоне и согласен(на) с протоколом уничтожения оригинала после подписания (ИИГ-П01).</span></label></div>
+      <span>Я ознакомлен(а) с условиями контракта, осведомлён(а) о рисках работы в Зоне и согласен(на) с протоколом уничтожения оригинала после подписания.</span></label></div>
     <div class="btns"><button class="act" id="btnAccept" disabled>✒ Принять контракт</button>
-      <button class="act gray" id="btnDecline">Отклонить</button></div>
-    <div id="barNote">ВНИМАНИЕ: после принятия контракт заверяется печатью ИИГ и сжигается согласно протоколу. Восстановление невозможно.</div>
+      <button class="act gray" id="btnDecline">Отклонить</button>
+      <button class="act" id="btnUpgrade" style="border-color:var(--amber);color:var(--amber)">⬆ Повысить допуск</button></div>
+    <div id="barNote">ВНИМАНИЕ: после принятия контракт заверяется печатью и сжигается согласно протоколу. Восстановление невозможно.</div>
   </section>
 </main>
 
 <section id="screenArchive" class="hidden">
   <div class="hole"></div>
   <h2>ДОСТУП К ТЕЛУ ДОКУМЕНТА ЗАКРЫТ</h2>
-  <p>Контракт принят к исполнению и уничтожен согласно протоколу ИИГ-П01.<br>Чтение, копирование и повторное подписание невозможны.</p>
+  <p>Контракт принят к исполнению и уничтожен согласно протоколу.<br>Чтение, копирование и повторное подписание невозможны.</p>
   <div id="recList"></div>
   <button id="copyBtnAdmin" class="hidden"> КУРАТОР: АРХИВНАЯ КОПИЯ (только чтение)</button>
 </section>
+
+<div id="upgradePrompt">
+  <div id="upgradeBox">
+    <h3>ПОВЫШЕНИЕ УРОВНЯ ДОПУСКА</h3>
+    <p>Введите код повышения допуска, выданный уполномоченным представителем.<br>Текущий уровень: <b id="currentLevelDisplay">1</b></p>
+    <input id="upgradeCode" type="password" placeholder="КОД ПОВЫШЕНИЯ" autocomplete="off">
+    <div class="btns center"><button class="act" id="upgradeConfirm">ПОДТВЕРДИТЬ</button><button class="act gray" id="upgradeCancel">ОТМЕНА</button></div>
+    <div class="upgradeErr" id="upgradeErr"></div>
+  </div>
+</div>
 
 <div id="copyOverlay">
   <div id="copyPaper"></div>
   <button class="act gray" id="copyClose">Закрыть копию</button>
 </div>
 
-<footer id="ftr" class="hidden">ИИГ · ТЕРМИНАЛ КОНТРАКТОВ v2.1 · ЗОНА ОТЧУЖДЕНИЯ · ТОЛЬКО ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ
+<footer id="ftr" class="hidden">ТЕРМИНАЛ КОНТРАКТОВ v2.1 · ЗОНА ОТЧУЖДЕНИЯ · ТОЛЬКО ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ
   <br><button id="resetBtn" class="hidden">[ АДМИН: СБРОСИТЬ БД ]</button></footer>
 
 <script>
@@ -306,15 +349,20 @@ const CONFIG = {
   EMBLEM: "emblem.png",
   PATCH:  "patch.png",
   DOC_ID: "ISG-2014-001",
-  CIPHER: "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",
+  CIPHER: "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",
   PLAIN: null,
   API_URL: "",
+  UPGRADE_CODES: {
+    "LEVEL2": 2,
+    "LEVEL3": 3
+  }
 };
 
 const $=s=>document.querySelector(s);
 const Q=new URLSearchParams(location.search);
 const IS_ADMIN=Q.has('admin'), IS_CURATOR=Q.has('curator');
 let CONTRACT=null, soundOn=true, AC=null, busy=false;
+let currentLevel = parseInt(localStorage.getItem('clearance_level')) || 1;
 const actx=()=>AC||(AC=new (window.AudioContext||window.webkitAudioContext)());
 function beep(f,d,type='square',g=.06){if(!soundOn)return;try{const a=actx(),o=a.createOscillator(),v=a.createGain();o.type=type;o.frequency.value=f;v.gain.setValueAtTime(g,a.currentTime);v.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.connect(v).connect(a.destination);o.start();o.stop(a.currentTime+d);}catch(e){}}
 function noise(d=.15,g=.08,fc=1800){if(!soundOn)return;try{const a=actx(),n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<n;i++)ch[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource(),v=a.createGain(),f=a.createBiquadFilter();s.buffer=b;f.type='bandpass';f.frequency.value=fc;v.gain.value=g;s.connect(f).connect(v).connect(a.destination);s.start();}catch(e){}}
@@ -349,33 +397,199 @@ function initEmblems(){document.querySelectorAll('img[data-emblem]').forEach(im=
   $('#wm').append($('#emblemTpl').content.firstElementChild.cloneNode(true));
   }
 
-function renderContract(C){$('#orgPlace').textContent=C.place;$('#metaDate').textContent='ДАТА: '+C.date;
-  $('#metaPlace').textContent='МЕСТО: '+C.place;$('#docTitle').textContent=C.title;
-  $('#docNum').textContent='ДОКУМЕНТ '+C.number+' · ЭКЗ. №1 (ЕДИНСТВЕННЫЙ)';$('#docPre').textContent=C.preamble;
+// === CLEARANCE LEVEL SYSTEM ===
+const GLITCH_CHARS = '░▒▓█╬╠╣╦╩◊◈◉⊕⊗⌬⌭⍟⎔⏣⏢┼├┤┬┴╔╗╚╝╟╢╫';
+let glitchIntervals = [];
+
+function createGlitchText(text) {
+  const span = document.createElement('span');
+  span.className = 'glitch-text';
+  const chars = [];
+  for (let i = 0; i < text.length; i++) {
+    const charSpan = document.createElement('span');
+    charSpan.className = 'glitch-char';
+    charSpan.textContent = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+    charSpan.dataset.origLen = '1';
+    span.appendChild(charSpan);
+    chars.push(charSpan);
+  }
+  const interval = setInterval(() => {
+    chars.forEach(ch => {
+      ch.textContent = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+    });
+  }, 80 + Math.random() * 60);
+  glitchIntervals.push(interval);
+  return span;
+}
+
+function clearGlitch() {
+  glitchIntervals.forEach(i => clearInterval(i));
+  glitchIntervals = [];
+}
+
+function getOrgName(level) {
+  if (level === 1) return 'glitch';
+  if (level === 2) return 'ИИГ';
+  return 'ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА';
+}
+
+function getOrgNameShort(level) {
+  if (level === 1) return 'glitch';
+  if (level === 2) return 'ИИГ';
+  return 'ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)';
+}
+
+function applyClearance(level) {
+  currentLevel = level;
+  localStorage.setItem('clearance_level', level);
+  clearGlitch();
+  
+  // Update header title
+  const titleEl = $('#orgTitle');
+  titleEl.innerHTML = '';
+  const orgName = getOrgName(level);
+  if (orgName === 'glitch') {
+    titleEl.appendChild(createGlitchText('ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА'));
+  } else {
+    titleEl.textContent = orgName;
+  }
+  
+  // Update header sub
+  $('#headerSub').textContent = `ЗАЩИЩЁННЫЙ ТЕРМИНАЛ КОНТРАКТОВ · УРОВЕНЬ ДОПУСКА ${level}`;
+  
+  // Update level buttons
+  document.querySelectorAll('.lvl-btn').forEach(btn => {
+    const btnLevel = parseInt(btn.dataset.level);
+    btn.classList.toggle('active', btnLevel === level);
+    btn.disabled = btnLevel > level;
+  });
+  
+  // Update level info
+  const infoTexts = {
+    1: 'БАЗОВЫЙ ДОСТУП · ВИДНА ТОЛЬКО ЭМБЛЕМА · НАИМЕНОВАНИЕ ЗАСЕКРЕЧЕНО',
+    2: 'ОГРАНИЧЕННЫЙ ДОСТУП · ВИДНА АББРЕВИАТУРА · РАСШИФРОВКА ЗАСЕКРЕЧЕНА',
+    3: 'ПОЛНЫЙ ДОСТУП · РАСШИФРОВКА ДОСТУПНА'
+  };
+  $('#levelInfo').textContent = infoTexts[level];
+  
+  // Update contract org name
+  const docOrgName = $('#docOrgName');
+  docOrgName.innerHTML = '';
+  const docOrgNameText = getOrgNameShort(level);
+  if (docOrgNameText === 'glitch') {
+    docOrgName.appendChild(createGlitchText('ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)'));
+  } else {
+    docOrgName.textContent = docOrgNameText;
+  }
+  
+  // Update sign org label
+  $('#iigSignLabel').textContent = level === 1 ? '[ЗАСЕКРЕЧЕНО]' : (level === 2 ? 'ИИГ' : 'ИИГ');
+  
+  // Update footer and form references
+  if (level === 1) {
+    $('#docForm').textContent = 'ФОРМА [ЗАСЕКРЕЧЕНО]-К/7 · СЕКРЕТНО';
+    $('#docFoot').textContent = 'ДОКУМЕНТ СОСТАВЛЕН В ДВУХ ЭКЗЕМПЛЯРАХ · ПОСЛЕ ПОДПИСАНИЯ ОРИГИНАЛ УНИЧТОЖАЕТСЯ СОГЛАСНО ПРОТОКОЛУ [ЗАСЕКРЕЧЕНО]-П01';
+  } else if (level === 2) {
+    $('#docForm').textContent = 'ФОРМА ИИГ-К/7 · СЕКРЕТНО';
+    $('#docFoot').textContent = 'ДОКУМЕНТ СОСТАВЛЕН В ДВУХ ЭКЗЕМПЛЯРАХ · ПОСЛЕ ПОДПИСАНИЯ ОРИГИНАЛ УНИЧТОЖАЕТСЯ СОГЛАСНО ПРОТОКОЛУ ИИГ-П01';
+  } else {
+    $('#docForm').textContent = 'ФОРМА ИИГ-К/7 · СЕКРЕТНО';
+    $('#docFoot').textContent = 'ДОКУМЕНТ СОСТАВЛЕН В ДВУХ ЭКЗЕМПЛЯРАХ · ПОСЛЕ ПОДПИСАНИЯ ОРИГИНАЛ УНИЧТОЖАЕТСЯ СОГЛАСНО ПРОТОКОЛУ ИИГ-П01';
+  }
+  
+  // Update current level display in upgrade prompt
+  $('#currentLevelDisplay').textContent = level;
+  
+  beep(440 + level * 110, 0.1);
+}
+
+function renderContract(C){
+  $('#orgPlace').textContent=C.place;
+  $('#metaDate').textContent='ДАТА: '+C.date;
+  $('#metaPlace').textContent='МЕСТО: '+C.place;
+  $('#docTitle').textContent=C.title;
+  $('#docNum').textContent='ДОКУМЕНТ '+C.number+' · ЭКЗ. №1 (ЕДИНСТВЕННЫЙ)';
+  $('#docPre').textContent=C.preamble;
   $('#docClauses').innerHTML=C.clauses.map((t,i)=>`<div class="clause">${i+1}. ${t}</div>`).join('')+`<div class="clause">${C.clauses.length+1}. ${C.deadline}</div>`;
   $('#rewardBox').innerHTML='<b>'+C.reward.split(':')[0]+':</b>'+C.reward.split(':').slice(1).join(':');
-  $('#iigSignatory').textContent=C.signatory;}
+  $('#iigSignatory').textContent=C.signatory;
+  applyClearance(currentLevel);
+}
+
 function docBodyHTML(C){
   let svg=$('#emblemTpl').innerHTML.replace(/id="arcT"/g,'id="arcT2"').replace(/id="arcB"/g,'id="arcB2"').replace(/href="#arcT"/g,'href="#arcT2"').replace(/href="#arcB"/g,'href="#arcB2"');
+  const orgName = currentLevel === 1 ? '[ЗАСЕКРЕЧЕНО]' : (currentLevel === 2 ? 'ИИГ' : 'ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)');
+  const signLabel = currentLevel === 1 ? '[ЗАСЕКРЕЧЕНО]' : 'ИИГ';
+  const formLabel = currentLevel === 1 ? '[ЗАСЕКРЕЧЕНО]' : 'ИИГ';
   return `<div class="p-head"><div class="emb" style="color:var(--red)">${svg}</div>
-  <div class="org"><b>ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)</b><br>${C.place}</div></div>
-  <div class="p-meta"><span>ДАТА: ${C.date}</span><span>ФОРМА ИИГ-К/7 · СЕКРЕТНО</span></div>
+  <div class="org"><b>${orgName}</b><br>${C.place}</div></div>
+  <div class="p-meta"><span>ДАТА: ${C.date}</span><span>ФОРМА ${formLabel}-К/7 · СЕКРЕТНО</span></div>
   <h2 class="doc">${C.title}</h2><div class="doc-num">ДОКУМЕНТ ${C.number} · АРХИВНАЯ КОПИЯ</div>
   <p class="pre">${C.preamble}</p>${C.clauses.map((t,i)=>`<div class="clause">${i+1}. ${t}</div>`).join('')}
   <div class="clause">${C.clauses.length+1}. ${C.deadline}</div>
   <div style="margin:14px 0;border:1px solid var(--red-d);background:rgba(163,22,33,.06);padding:9px 12px;font-size:11px"><b style="color:var(--red-d)">${C.reward.split(':')[0]}:</b>${C.reward.split(':').slice(1).join(':')}</div>
   <div class="signs"><div class="col">ИСПОЛНИТЕЛЬ:<div class="sigline"><span class="hand show">—</span></div></div>
-  <div class="col">ЗА ИИГ: ${C.signatory}<div class="sigline"><span class="hand show">Профессор</span></div></div></div>
+  <div class="col">ЗА ${signLabel}: ${C.signatory}<div class="sigline"><span class="hand show">Профессор</span></div></div></div>
   <div class="diag"><span>КОПИЯ · ОРИГИНАЛ УНИЧТОЖЕН<br>К ПОДПИСАНИЮ НЕ ДЕЙСТВИТЕЛЕН</span></div>`;}
 
 (function(){const cv=$('#embers');if(!cv)return;const cx=cv.getContext('2d');let W,H,P=[];const rs=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight};rs();addEventListener('resize',rs);
 for(let i=0;i<55;i++)P.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.6,s:Math.random()*.7+.25,o:Math.random()});
 (function loop(){cx.clearRect(0,0,W,H);for(const p of P){p.y-=p.s;p.x+=Math.sin(p.y/40)*.4;p.o+=.03;if(p.y<-10){p.y=H+10;p.x=Math.random()*W}
 cx.globalAlpha=.25+Math.abs(Math.sin(p.o))*.45;cx.fillStyle=Math.random()<.15?'#ff2d3f':'#ffb347';cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fill();}cx.globalAlpha=1;requestAnimationFrame(loop);})();})();
-const BOOT_LINES=['> ИИГ // ЗАЩИЩЁННЫЙ КАНАЛ СВЯЗИ v3.11','> ИНИЦИАЛИЗАЦИЯ ШИФРОВАНИЯ... AES-256-GCM','> ПРОВЕРКА УРОВНЯ ДОПУСКА... [3] ПОДТВЕРЖДЁН','> ЗАГРУЗКА РЕЕСТРА КОНТРАКТОВ...','> СЛЕДЫ ДЕЯТЕЛЬНОСТИ ЗАТИРАЮТСЯ АВТОМАТИЧЕСКИ'];
+const BOOT_LINES=['> ЗАЩИЩЁННЫЙ КАНАЛ СВЯЗИ v3.11','> ИНИЦИАЛИЗАЦИЯ ШИФРОВАНИЯ... AES-256-GCM','> ПРОВЕРКА УРОВНЯ ДОПУСКА... ['+currentLevel+'] ПОДТВЕРЖДЁН','> ЗАГРУЗКА РЕЕСТРА КОНТРАКТОВ...','> СЛЕДЫ ДЕЯТЕЛЬНОСТИ ЗАТИРАЮТСЯ АВТОМАТИЧЕСКИ'];
 function boot(cb){let li=0,ci=0,txt='';const pre=$('#bootTxt');(function tick(){if(li>=BOOT_LINES.length){let p=0;const iv=setInterval(()=>{p+=7;$('#bootBar').style.width=Math.min(p,100)+'%';if(p>=100){clearInterval(iv);setTimeout(()=>{$('#boot').classList.add('done');cb();},350);}},40);return;}
 const line=BOOT_LINES[li];if(ci<=line.length){pre.innerHTML=txt+line.slice(0,ci)+'<span class="cursor"></span>';ci++;setTimeout(tick,12+Math.random()*22);}else{txt+=line+'\n';li++;ci=0;setTimeout(tick,120);}})();}
 setInterval(()=>{$('#statusLine').textContent=`КАНАЛ: ШИФРОВАН · СЕАНС: ${new Date().toLocaleTimeString('ru-RU')}`;},1000);
+
+// Level selector buttons
+document.querySelectorAll('.lvl-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const newLevel = parseInt(btn.dataset.level);
+    if (newLevel <= currentLevel) {
+      applyClearance(newLevel);
+    }
+  });
+});
+
+// Upgrade prompt
+$('#btnUpgrade').addEventListener('click', () => {
+  if (currentLevel >= 3) {
+    $('#barNote').textContent = 'МАКСИМАЛЬНЫЙ УРОВЕНЬ ДОПУСКА УЖЕ ДОСТИГНУТ.';
+    return;
+  }
+  $('#upgradePrompt').classList.add('show');
+  $('#upgradeCode').value = '';
+  $('#upgradeErr').textContent = '';
+  $('#upgradeCode').focus();
+});
+
+$('#upgradeCancel').addEventListener('click', () => {
+  $('#upgradePrompt').classList.remove('show');
+});
+
+$('#upgradeConfirm').addEventListener('click', () => {
+  const code = $('#upgradeCode').value.trim().toUpperCase();
+  if (CONFIG.UPGRADE_CODES[code] && CONFIG.UPGRADE_CODES[code] === currentLevel + 1) {
+    currentLevel++;
+    applyClearance(currentLevel);
+    $('#upgradePrompt').classList.remove('show');
+    beep(880, 0.15);
+    beep(1320, 0.2);
+  } else if (CONFIG.UPGRADE_CODES[code] && CONFIG.UPGRADE_CODES[code] > currentLevel + 1) {
+    $('#upgradeErr').textContent = 'ОШИБКА: код позволяет повысить допуск только на один уровень.';
+    beep(140, 0.2, 'sawtooth', 0.1);
+  } else {
+    $('#upgradeErr').textContent = 'ОТКАЗ: неверный код повышения допуска.';
+    beep(140, 0.25, 'sawtooth', 0.12);
+    document.body.classList.add('shake');
+    setTimeout(() => document.body.classList.remove('shake'), 400);
+  }
+});
+
+$('#upgradeCode').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('#upgradeConfirm').click();
+  if (e.key === 'Escape') $('#upgradeCancel').click();
+});
 
 let tries=0;
 $('#gateBtn').addEventListener('click',async()=>{const pass=$('#gatePass').value;
@@ -408,7 +622,7 @@ $('#btnAccept').addEventListener('click',()=>{if(busy||!valid())return;busy=true
   const signer=$('#callsign').value.trim();
   const rec={id:CONFIG.DOC_ID,number:CONTRACT.number,signer,ts:Date.now(),status:'ПРИНЯТ · ОРИГИНАЛ СОЖЖЁН'};
   dbPut(rec);
-  $('#btnAccept').disabled=true;$('#btnDecline').disabled=true;$('#barNote').textContent='ПРОТОКОЛ ИИГ-П01 ЗАПУЩЕН...';
+  $('#btnAccept').disabled=true;$('#btnDecline').disabled=true;$('#btnUpgrade').disabled=true;$('#barNote').textContent='ПРОТОКОЛ УНИЧТОЖЕНИЯ ЗАПУЩЕН...';
   $('#signerPrint').textContent=signer;
   setTimeout(()=>{$('#stamp').classList.add('slam');document.body.classList.add('shake');beep(70,.25,'sine',.2);noise(.12,.12,300);setTimeout(()=>document.body.classList.remove('shake'),400);},500);
   setTimeout(()=>{const h=$('#signHand');h.textContent=signer;h.classList.add('show');beep(880,.05);beep(660,.06);},1300);
@@ -436,7 +650,7 @@ function burn(rec){const paper=$('#paper'),box=$('#paperBox'),ch=$('#charRing'),
     if(t-lastFlame>55&&k<1){lastFlame=t;const a=Math.random()*Math.PI*2,r=R*(.85+Math.random()*.2);
       const f=document.createElement('div');f.className='flame';f.style.left=(bx+Math.cos(a)*r-12)+'px';f.style.top=(by+Math.sin(a)*r-28)+'px';box.appendChild(f);setTimeout(()=>f.remove(),420+Math.random()*250);}
     if(k<1)requestAnimationFrame(frame);else finish();})(t0);
-  function finish(){clearInterval(crack);
+  function finish(){clearInterval(crack);clearGlitch();
     paper.classList.add('collapsed');ch.style.opacity=0;gl.style.opacity=0;
     document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),400);
     for(let i=0;i<46;i++){const a=document.createElement('div');a.className='ash';
@@ -451,7 +665,7 @@ function burn(rec){const paper=$('#paper'),box=$('#paperBox'),ch=$('#charRing'),
 
 function showArchive(){$('#screenContract').classList.add('hidden');$('#gate').classList.add('hidden');
   $('#screenArchive').classList.remove('hidden');
-  $('#recList').innerHTML=dbLoad().records.map(r=>`<div class="recCard"><b>РЕЕСТР ИИГ · ЗАПИСЬ ОБ УНИЧТОЖЕНИИ</b><br>Документ: ${r.number}<br>Исполнитель: ${r.signer}<br>Статус: ${r.status}</div>`).join('');
+  $('#recList').innerHTML=dbLoad().records.map(r=>`<div class="recCard"><b>РЕЕСТР · ЗАПИСЬ ОБ УНИЧТОЖЕНИИ</b><br>Документ: ${r.number}<br>Исполнитель: ${r.signer}<br>Статус: ${r.status}</div>`).join('');
   if(IS_ADMIN)$('#copyBtnAdmin').classList.remove('hidden');}
 $('#copyBtnAdmin').addEventListener('click',()=>{
   if(!CONFIG.CIPHER){
@@ -465,13 +679,14 @@ $('#copyBtnAdmin').addEventListener('click',()=>{
 $('#copyClose').addEventListener('click',()=>{$('#copyOverlay').classList.remove('show');$('#copyPaper').innerHTML='';});
 
 boot(()=>{$('#hdr').classList.remove('hidden');$('#ftr').classList.remove('hidden');initEmblems();
+  applyClearance(currentLevel);
   if(IS_ADMIN)$('#resetBtn').classList.remove('hidden');
   if(IS_CURATOR){initCurator();$('#curator').classList.remove('hidden');return;}
   if(dbFind(CONFIG.DOC_ID)){showArchive();return;}
   if(CONFIG.CIPHER){$('#gate').classList.remove('hidden');}
   else if(CONFIG.PLAIN){CONTRACT=CONFIG.PLAIN;$('#demoWarn').classList.remove('hidden');showContract();}
   else{$('#gate').classList.remove('hidden');$('#gateErr').textContent='НЕТ ДАННЫХ: CIPHER пуст и PLAIN отключён.';}});
-$('#resetBtn').addEventListener('click',()=>{if(confirm('Сбросить БД контрактов ИИГ на этом устройстве?')){localStorage.removeItem(DB_KEY);location.href=location.pathname;}});
+$('#resetBtn').addEventListener('click',()=>{if(confirm('Сбросить БД контрактов на этом устройстве?')){localStorage.removeItem(DB_KEY);location.href=location.pathname;}});
 $('#sndBtn').addEventListener('click',()=>{soundOn=!soundOn;$('#sndBtn').textContent='ЗВУК: '+(soundOn?'ВКЛ':'ВЫКЛ');});
 </script>
 </body>
