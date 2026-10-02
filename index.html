@@ -29,9 +29,7 @@ body.shake{animation:shake .35s linear}
 .hidden{display:none !important}
 .center{justify-content:center}
 
-/* АВТОЦЕНЗОР: статичные чёрные квадраты. Без анимаций и таймеров. */
 .rg{font-family:var(--mono);letter-spacing:0;user-select:none}
-/* если нужно абсолютно чёрным везде (даже в тёмном терминале): .rg{color:#000} */
 .censorStamp{width:100%;height:100%;border:3px double rgba(110,13,21,.75);border-radius:50%;color:rgba(110,13,21,.8);display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:.12em;line-height:1.5;opacity:.9}
 
 #boot{position:fixed;inset:0;z-index:70;background:var(--bg);padding:8vh 10vw;font-size:15px;line-height:1.9;color:var(--red-glow);text-shadow:0 0 8px rgba(255,45,63,.5)}
@@ -351,7 +349,6 @@ const CONFIG = {
   UPGRADE_CODES: { "LEVEL2": 2, "LEVEL3": 3 }
 };
 
-/* Пресет контракта информатора (для куратора, предзаполнение) */
 const PRESET = {
   id: "ISG-2014-002",
   number: "ИИГ-ИНФ-002/09-2014",
@@ -384,10 +381,9 @@ const actx=()=>AC||(AC=new (window.AudioContext||window.webkitAudioContext)());
 function beep(f,d,type='square',g=.06){if(!soundOn)return;try{const a=actx(),o=a.createOscillator(),v=a.createGain();o.type=type;o.frequency.value=f;v.gain.setValueAtTime(g,a.currentTime);v.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.connect(v).connect(a.destination);o.start();o.stop(a.currentTime+d);}catch(e){}}
 function noise(d=.15,g=.08,fc=1800){if(!soundOn)return;try{const a=actx(),n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<n;i++)ch[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource(),v=a.createGain(),f=a.createBiquadFilter();s.buffer=b;f.type='bandpass';f.frequency.value=fc;v.gain.value=g;s.connect(f).connect(v).connect(a.destination);s.start();}catch(e){}}
 
-/* ===== ЦЕНЗОР ДОПУСКА: статичные чёрные квадраты █, без анимаций и таймеров ===== */
 const BLOCK='█';
 const blocks=n=>BLOCK.repeat(Math.min(n,64));
-const refreshRG=()=>{}; /* заглушка: анимации больше нет */
+const refreshRG=()=>{}; 
 const RE_ALL=/ИНТЕРНАЦИОНАЛЬНАЯ\s+ИССЛЕДОВАТЕЛЬСКАЯ\s+ГРУППА\s*\(ИИГ\)|ИНТЕРНАЦИОНАЛЬНАЯ\s+ИССЛЕДОВАТЕЛЬСКАЯ\s+ГРУППА|И\s?И\s?Г|\b(?:UNISG|ISG|IIG)\b/gi;
 const RE_FULL=/ИНТЕРНАЦИОНАЛЬНАЯ\s+ИССЛЕДОВАТЕЛЬСКАЯ\s+ГРУППА\s*(\(ИИГ\))?/gi;
 const RE_SPACED=/И\s+И\s+Г/g;
@@ -422,7 +418,7 @@ function deWhite(img){try{const w=img.naturalWidth,h=img.naturalHeight,c=documen
   for(let i=0;i<p.length;i+=4){const lum=p[i]*.299+p[i+1]*.587+p[i+2]*.114;let a=255;if(lum>246)a=0;else if(lum>228)a=Math.round((246-lum)/18*255);if(a<p[i+3])p[i+3]=a;}
   x.putImageData(d,0,0);img.src=c.toDataURL('image/png');img.classList.add('nowb');}catch(e){if(img.dataset.emblem==='patch')img.classList.add('wb');}}
 let emblemSeq=0;
-/* эмблема: заглушённые дуги = статичная чёрная полоса █, вычисляется один раз */
+
 function emblemSVGFor(level){const n=$('#emblemTpl').content.firstElementChild.cloneNode(true);emblemSeq++;const s=emblemSeq;
   n.innerHTML=n.innerHTML.replace(/id="arcT"/g,'id="arcT'+s+'"').replace(/id="arcB"/g,'id="arcB'+s+'"').replace(/href="#arcT"/g,'href="#arcT'+s+'"').replace(/href="#arcB"/g,'href="#arcB'+s+'"');
   const tps=n.querySelectorAll('textPath');
