@@ -248,6 +248,7 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
   <label>Дата</label><input id="c_date">
   <label>Место</label><input id="c_place">
   <label>Заголовок</label><input id="c_title">
+  <label>Степень секретности (через запятую: для уровня 1 — «ОСОБЫЙ», для 2 — «СЕКРЕТНО»)</label><input id="c_cls" placeholder="СЕКРЕТНО, ОСОБЫЙ">
   <label>Преамбула</label><textarea id="c_pre"></textarea>
   <label>Пункты (каждый пункт с новой строки; можно &lt;b&gt;...&lt;/b&gt;)</label><textarea id="c_clauses" style="min-height:150px"></textarea>
   <label>Вознаграждение</label><textarea id="c_reward" style="min-height:40px"></textarea>
@@ -278,7 +279,8 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
       <div id="rewardBox"></div>
       <div class="signs">
         <div class="col">ИСПОЛНИТЕЛЬ (исследователь):<br><span id="signerPrint">____________________</span>
-          <div class="sigline"><span class="hand" id="signHand"></span></div><small>подпись / расшифровка · дата подписания</small></div>
+          <div class="sigline"><span class="hand" id="signHand"></span></div><small>подпись / расшифровка · дата подписания</small>
+          <div id="agentRank" style="display:none;margin-top:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:#6e0d15;border:1px dashed #6e0d15;padding:3px 6px"></div></div>
         <div class="col">ЗА <span id="signOrgLbl">ИИГ</span>: <span id="iigSignatory"></span>
           <div class="sigline"><span class="hand show">Exo</span></div><small>подпись уполномоченного представителя</small></div>
         <div id="stampZone"><div id="stamp"><img data-emblem="emblem" src="emblem.png" alt="Печать ИИГ"></div></div>
@@ -309,6 +311,17 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
       <button class="act gray" id="btnDecline">Отклонить</button>
       <button class="act" id="btnUpgrade" style="border-color:var(--amber);color:var(--amber)">⬆ Повысить допуск</button></div>
     <div id="barNote">ВНИМАНИЕ: после принятия контракт заверяется печатью ИИГ и сжигается согласно протоколу. Восстановление невозможно.</div>
+    <div id="timerLine" style="margin-top:8px;font-size:10.5px;letter-spacing:.12em;color:var(--amber)">ДО ИСТЕЧЕНИЯ СРОКА: —</div></section>
+  <section id="reportBar" style="width:min(640px,94vw);margin-top:16px;border:1px solid var(--red-d);background:rgba(20,10,10,.72);padding:14px 18px">
+    <div class="row" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+      <label style="font-size:11px;letter-spacing:.12em;color:var(--red-glow)">ДОЧЕСВЯЗЬ · КАНАЛ «НЕИЗВЕСТНЫЙ»:</label>
+      <select id="repClass" style="background:#140b0b;border:1px solid var(--red-d);color:var(--paper);font-family:var(--mono);font-size:11px;padding:6px">
+        <option>ДОНЕСЕНИЕ</option><option>СВЕДЕНИЯ О ПОХОДЕ ТРЕТЬЕЙ СТОРОНЫ</option><option>АРТЕФАКТ / АНОМАЛИЯ</option><option>МУТАНТЫ</option><option>ФРАГМЕНТ «ОСКОЛ»</option><option>ПАТРУЛЬ ОКСОП</option><option>СИГНАЛ О БЕДЕ</option>
+      </select></div>
+    <textarea id="repText" maxlength="2000" placeholder="текст донесения в свободной форме (передаётся немедленно, без задержек)…" style="width:100%;min-height:60px;background:#140b0b;border:1px solid var(--red-d);color:var(--paper);font-family:var(--mono);font-size:12px;padding:8px;outline:none"></textarea>
+    <div class="btns" style="margin-top:10px"><button class="act" id="btnSendRep">📡 Передать сигнал</button></div>
+    <div id="repWarn" style="margin-top:8px;font-size:10px;color:#7a6f63">Согласно п.2 контракта связь ведётся через КПК с «Прослушкой». Переписка с Заказчиком удаляется сразу после прочтения (п.5).</div>
+    <div id="repStatus" style="margin-top:8px;font-size:11px;color:var(--amber);letter-spacing:.1em"></div>
   </section>
 </main>
 
@@ -316,8 +329,15 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
   <div class="hole"></div>
   <h2>ДОСТУП К ТЕЛУ ДОКУМЕНТА ЗАКРЫТ</h2>
   <p id="archP">Контракт принят к исполнению и уничтожен согласно протоколу ИИГ-П01.<br>Чтение, копирование и повторное подписание невозможны.</p>
+  <div id="statLine" style="font-size:10.5px;color:var(--amber);letter-spacing:.12em;margin-bottom:14px"></div>
   <div id="recList"></div>
+  <h2 style="margin-top:26px;font-size:13px">Шифротека донесений</h2>
+  <p style="font-size:11px">Принятые сигналы по каналу «Неизвестный» (хранятся в шифрованном виде).</p>
+  <div id="repList"></div>
   <button id="copyBtnAdmin" class="hidden"> КУРАТОР: АРХИВНАЯ КОПИЯ (только чтение)</button>
+  <button id="exportBtn" class="hidden">⬇ Экспорт БД (secrets.json)</button>
+  <button id="importBtn" class="hidden">⬆ Импорт БД</button><input type="file" id="importFile" accept=".json,application/json" class="hidden" style="display:none">
+  <button id="wipeBtn" class="hidden" style="border-color:#8a2a2a;color:#d06060">☠ ПОЛНОЕ СТИРАНИЕ (records + reports + logs + secrets)</button>
 </section>
 
 <div id="upgradePrompt">
@@ -336,7 +356,8 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
 </div>
 
 <footer id="ftr" class="hidden"><span id="ftrTxt">ИИГ · ТЕРМИНАЛ КОНТРАКТОВ v2.1 · ЗОНА ОТЧУЖДЕНИЯ · ТОЛЬКО ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ</span>
-  <br><button id="resetBtn" class="hidden">[ АДМИН: СБРОСИТЬ БД ]</button></footer>
+  <br><button id="resetBtn" class="hidden">[ АДМИН: СБРОСИТЬ БД ]</button>
+  <div id="regStats" class="hidden" style="margin:10px auto;max-width:640px;text-align:left;font-size:9.5px;color:#7a6f63;border:1px dashed #444;padding:8px;line-height:1.7"></div></footer>
 
 <script>
 const CONFIG = {
@@ -355,6 +376,7 @@ const PRESET = {
   date: "12 сентября 2014 г.",
   place: "Расположение «???», «ЗТК»",
   title: "КОНТРАКТ О КОНФИДЕНЦИАЛЬНОЙ ПЕРЕДАЧЕ ИНФОРМАЦИИ",
+  cls: ["ОСОБЫЙ"],
   preamble: "Интернациональная Исследовательская Группа (далее — «Заказчик»), в лице уполномоченного представителя полевого подразделения (позывной «Неизвестный»), и субъект, указанный в разделе «Исполнитель» (далее — «Исполнитель», информатор), заключили настоящий Контракт о нижеследующем. Истинное наименование Заказчика засекречено для Исполнителя согласно уровню допуска настоящего документа. Исполнитель подтверждает, что осведомлён о возможных рисках и действует добровольно. Любое несанкционированное нарушение условий договора повлечёт за собой физическое устранение ответственного лица, нарушившего договор.",
   clauses: [
     "<b>Предмет контракта.</b> Исполнитель обязуется самостоятельно и за свой риск собирать и передавать Заказчику информацию, могущую представлять оперативную ценность: сведения о готовящихся, снаряжаемых и идущих походах (выходах) третьих сторон в Зону и в лабораторные комплексы — маршруты, сроки, состав, снаряжение и цели групп; данные об артефактах, аномалиях, мутантах и фрагментах «ОСКОЛ»; сведения о перемещениях патрулей ОКСОП и официальных научных групп; иную информацию, представляющую интерес для Заказчика. Исполнитель является информатором и действует под присвоенным Заказчиком псевдонимом.",
@@ -383,7 +405,7 @@ function noise(d=.15,g=.08,fc=1800){if(!soundOn)return;try{const a=actx(),n=a.sa
 
 const BLOCK='█';
 const blocks=n=>BLOCK.repeat(Math.min(n,64));
-const refreshRG=()=>{}; 
+function refreshRG(){document.querySelectorAll('.rg').forEach(el=>{el.textContent=blocks(el.dataset.n||el.textContent.length);});} 
 const RE_ALL=/ИНТЕРНАЦИОНАЛЬНАЯ\s+ИССЛЕДОВАТЕЛЬСКАЯ\s+ГРУППА\s*\(ИИГ\)|ИНТЕРНАЦИОНАЛЬНАЯ\s+ИССЛЕДОВАТЕЛЬСКАЯ\s+ГРУППА|И\s?И\s?Г|\b(?:UNISG|ISG|IIG)\b/gi;
 const RE_FULL=/ИНТЕРНАЦИОНАЛЬНАЯ\s+ИССЛЕДОВАТЕЛЬСКАЯ\s+ГРУППА\s*(\(ИИГ\))?/gi;
 const RE_SPACED=/И\s+И\s+Г/g;
@@ -406,12 +428,100 @@ async function encryptJSON(obj,pass){const salt=crypto.getRandomValues(new Uint8
 async function decryptJSON(blob,pass){const a=b64d(blob),salt=a.slice(0,16),iv=a.slice(16,28),ct=a.slice(28);
   const key=await deriveKey(pass,salt);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,ct);return JSON.parse(DEC.decode(pt));}
 
-const DB_KEY='iig_db_v1';
-const dbLoad=()=>{try{return JSON.parse(localStorage.getItem(DB_KEY))||{records:[]}}catch(e){return{records:[]}}};
-const dbSave=d=>localStorage.setItem(DB_KEY,JSON.stringify(d));
+const DB_KEY='iig_db_v2';
+const DB_MIGRATED='iig_db_migrated_v2';
+// ─── ЦЕЛОСТНОСТЬ БД: контрольная сумма djb2 (защита от ручного редактирования в консоли) ───
+function dbChecksum(o){let h=5381;const s=JSON.stringify({records:o.records||[],reports:o.reports||[],logs:o.logs||[]},(k,v)=>{
+    if(v&&typeof v==='object'&&!Array.isArray(v)){const n={};Object.keys(v).sort().forEach(kk=>n[kk]=v[kk]);return n;}return v;});
+  for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))>>>0;}return h.toString(16);}
+let dbTamperFlag=false;
+function dbLoad(){try{const d=JSON.parse(localStorage.getItem(DB_KEY));
+    if(d&&Array.isArray(d.records)){
+      if(d.chk&&d.chk!==dbChecksum(d)){dbTamperFlag=true;d.tampered=true;}
+      return d;}}catch(e){}
+  return{version:2,records:[],reports:[],logs:[]};}
+function dbSave(d){d.version=2;d.updatedAt=new Date().toISOString();d.chk=dbChecksum(d);
+  const write=()=>localStorage.setItem(DB_KEY,JSON.stringify(d));
+  try{write();}catch(e){
+    // квота переполнена: сначала урезаем журнал, потом донесения, потом старые записи
+    d.logs=(d.logs||[]).slice(-30);d.reports=(d.reports||[]).slice(-40);
+    try{write();}catch(e2){
+      d.records=d.records.slice(-20);d.reports=[];
+      try{write();}catch(e3){}}}}
 const dbFind=id=>dbLoad().records.find(r=>r.id===id);
-function dbPut(rec){const d=dbLoad();if(!d.records.find(r=>r.id===rec.id))d.records.push(rec);dbSave(d);
+function dbLog(msg){const d=dbLoad();d.logs=d.logs||[];d.logs.push({ts:Date.now(),msg});if(d.logs.length>200)d.logs=d.logs.slice(-200);dbSave(d);}
+function dbPut(rec){const d=dbLoad();if(!d.records.find(r=>r.id===rec.id)){d.records.push(rec);
+  d.logs=d.logs||[];d.logs.push({ts:rec.ts,msg:'ПРОТОКОЛ ИИГ-П01: документ '+rec.id+' уничтожен, запись внесена в реестр'});
+  if(d.logs.length>200)d.logs=d.logs.slice(-200);}
+  dbSave(d);
   if(CONFIG.API_URL){try{fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)}).catch(()=>{})}catch(e){}}}
+function dbAddReport(rep){const d=dbLoad();d.reports=d.reports||[];d.reports.push(rep);dbSave(d);
+  if(CONFIG.API_URL){try{fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'report',...rep})}).catch(()=>{})}catch(e){}}}
+function dbExport(includeSecrets){const d=dbLoad();d.exportedAt=new Date().toISOString();d.ua=navigator.userAgent;delete d.chk;d.chk=dbChecksum(d);
+  if(includeSecrets)d.secrets=secLoad();else delete d.secrets;return JSON.stringify(d,null,2);}
+function dbImport(json){let d;try{d=JSON.parse(json);}catch(e){throw new Error('Файл повреждён или не является резервной копией БД.');}
+  if(!d||!Array.isArray(d.records))throw new Error('Неверная структура резервной копии.');
+  if(d.chk&&d.chk!==dbChecksum(d))throw new Error('Контрольная сумма копии не совпала: файл изменён извне. Импорт запрещён.');
+  const cur=dbLoad();const ids=new Set(cur.records.map(r=>r.id));
+  for(const r of d.records)if(!ids.has(r.id))cur.records.push(r);
+  cur.reports=(cur.reports||[]).concat((d.reports||[]).filter(x=>!cur.reports.some(y=>y.id===x.id)));
+  cur.logs=(cur.logs||[]).concat(d.logs||[]).sort((a,b)=>a.ts-b.ts).slice(-200);
+  if(Array.isArray(d.secrets)){const cs=secLoad();for(const sc of d.secrets)if(!cs.some(x=>x.ts===sc.ts&&x.value===sc.value))cs.push(sc);secSave(cs);}
+  delete cur.chk;dbSave(cur);}
+// ─── СЖАТИЕ РЕЕСТРА: автоочистка старых записей (хранение не более 90 суток) ───
+function dbPrune(){const d=dbLoad(),cut=Date.now()-90*86400000,before=d.records.length;
+  d.records=(d.records||[]).filter(r=>r.ts>=cut);
+  const rb=before-d.records.length;
+  const lBefore=(d.logs||[]).length;d.logs=(d.logs||[]).filter(l=>l.ts>=cut);
+  const repBefore=(d.reports||[]).length;d.reports=(d.reports||[]).filter(p=>p.ts>=cut);
+  if(rb>0||lBefore!==(d.logs||[]).length||repBefore!==d.reports.length){
+    d.logs.push({ts:Date.now(),msg:'Автоочистка: записей — '+rb+', донесений — '+(repBefore-d.reports.length)+', строк журнала — '+(lBefore-d.logs.length+1)+' (старше 90 суток)'});
+    dbSave(d);}}
+dbPrune();
+// миграция v1 → v2 (структура та же, добавлены поля reports/logs)
+if(!localStorage.getItem(DB_MIGRATED)){try{const old=JSON.parse(localStorage.getItem('iig_db_v1'));
+  if(old&&Array.isArray(old.records)){old.reports=old.reports||[];old.logs=old.logs||[];dbSave(old);localStorage.removeItem('iig_db_v1');}}catch(e){}
+  localStorage.setItem(DB_MIGRATED,'1');}
+
+// ─── ЖУРНАЛ АКТИВНОСТИ ТЕРМИНАЛА (secrets.json / CONFIG) ───
+const SECRETS_KEY='iig_secrets_v1';
+function secLoad(){try{return JSON.parse(localStorage.getItem(SECRETS_KEY))||[];}catch(e){return[];}}
+function secSave(a){try{localStorage.setItem(SECRETS_KEY,JSON.stringify(a.slice(-50)));}catch(e){}}
+function logSecret(type,value,detail){if(!value)return;const a=secLoad();
+  a.push({ts:Date.now(),type,value:String(value),detail:detail||''});secSave(a);
+  if(CONFIG.API_URL){try{fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'secret',t:a[a.length-1]})}).catch(()=>{})}catch(e){}}}
+
+// ─── АНТИЛОМ: защита от перебора кодов доступа (экспоненциальная блокировка) ───
+const LOCK_KEY='iig_lock_v1';
+function lockState(){try{return JSON.parse(localStorage.getItem(LOCK_KEY))||{fails:0,until:0};}catch(e){return{fails:0,until:0};}}
+function lockSave(s){try{localStorage.setItem(LOCK_KEY,JSON.stringify(s));}catch(e){}}
+function gateLockInfo(){const s=lockState(),left=Math.ceil((s.until-Date.now())/1000);
+  return left>0?('ЗАБЛОКИРОВАНО: повторить попытку можно через '+left+' с.'):('ОТКАЗ: неверный код доступа. Осталось попыток до блокировки: '+(5-s.fails));}
+function gateRegisterFail(){const s=lockState();s.fails++;
+  if(s.fails>=5){ // эскалация: 30с → 2м → 10м → 30м → 60м… (удвоение, максимум 1 час)
+    s.strikes=(s.strikes||0)+1;
+    const ms=Math.min(30000*Math.pow(2,s.strikes-1),3600000);
+    s.until=Date.now()+ms;s.fails=0;
+    dbLog('Антилом: шлюз заблокирован на '+Math.round(ms/1000)+' с после 5 неверных попыток (удар №'+s.strikes+')');
+    beep(90,.6,'sawtooth',.15);document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),400);}
+  lockSave(s);}
+function gateRegisterOk(){lockSave({fails:0,until:0,strikes:0});}
+let sessionTries=0; // счётчик попыток текущей сессии (не сохраняется — не даёт подсказок злоумышленнику)
+
+// ─── ТАЙМЕР КОНТРАКТА (30 суток по п. «Срок действия») ───
+const DEADLINE_MS=30*24*3600*1000;
+function contractCountdown(ts){const left=(ts+DEADLINE_MS)-Date.now();
+  if(left<=0)return{text:'СРОК ДЕЙСТВИЯ ИСТЁК · КОНТРАКТ АННУЛИРОВАН',expired:true};
+  const d=Math.floor(left/86400000),h=Math.floor(left%86400000/3600000),m=Math.floor(left%3600000/60000);
+  return{text:'ДО ИСТЕЧЕНИЯ СРОКА: '+d+' сут · '+h+' ч · '+m+' мин',expired:false};}
+setInterval(()=>{const el=$('#timerLine');if(!el||$('#screenContract').classList.contains('hidden')||!CONTRACT)return;
+  const c=contractCountdown(CONTRACT.signedAt||Date.now());el.textContent=c.text;el.style.color=c.expired?'var(--red-glow)':'var(--amber)';},1000);
+
+// ─── ДОСЬЕ ИНФОРМАТОРА: звание по числу контрактов ───
+const RANKS=['НОВИЧОК','ИНФОРМАТОР','АГЕНТ','КУТЬЕ','ЛЕГЕНДА ЗОНЫ'];
+function agentRank(name){if(!name)return RANKS[0];const d=dbLoad();
+  const n=d.records.filter(r=>(r.signer||'').toLowerCase()===name.toLowerCase()).length;
+  return RANKS[Math.min(n,RANKS.length-1)];}
 
 function deWhite(img){try{const w=img.naturalWidth,h=img.naturalHeight,c=document.createElement('canvas');c.width=w;c.height=h;
   const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(img,0,0);const d=x.getImageData(0,0,w,h),p=d.data;
@@ -440,7 +550,7 @@ function setupEmblems(level){
   if(level===2){pb.append(emblemSVGFor(2));ge.append(emblemSVGFor(2));pe.append(emblemSVGFor(2));wm.append(emblemSVGFor(2));st.append(emblemSVGFor(2));}
   else{pb.append(emblemImg('patch'));ge.append(emblemImg('patch'));pe.append(emblemImg('emblem'));wm.append(emblemSVGFor(3));st.append(emblemImg('emblem'));}}
 
-const REG_IDS=['orgTitle','orgBlock','metaForm','docFoot','signOrgLbl','gateP','chkSpan','barNote','doneOk','archP','ftrTxt'];
+const REG_IDS=['orgTitle','orgBlock','metaForm','docFoot','signOrgLbl','gateP','chkSpan','barNote','doneOk','archP','ftrTxt','repWarn'];
 function registerOrig(){REG_IDS.forEach(id=>{const el=$('#'+id);if(el&&!el.dataset.orig)el.dataset.orig=el.innerHTML;});}
 const ORIG_TITLE=document.title;
 function applyLevel(level){
@@ -466,6 +576,7 @@ function renderTexts(C){
   $('#metaDate').textContent='ДАТА: '+C.date;
   $('#metaPlace').textContent='МЕСТО: '+C.place;
   $('#docTitle').innerHTML=maskHTML(C.title);
+  if(C.cls&&C.cls.length)$('#docTitle').innerHTML+='<br><span style="font-size:10px;letter-spacing:.3em">СТЕПЕНЬ СЕКРЕТНОСТИ: '+maskHTML(C.cls.join(' · '))+'</span>';
   $('#docNum').innerHTML=maskHTML('ДОКУМЕНТ '+C.number+' · ЭКЗ. №1 (ЕДИНСТВЕННЫЙ)');
   $('#docPre').innerHTML=maskHTML(C.preamble);
   $('#docClauses').innerHTML=C.clauses.map((t,i)=>`<div class="clause">${i+1}. ${maskHTML(t)}</div>`).join('')+`<div class="clause">${C.clauses.length+1}. ${maskHTML(C.deadline)}</div>`;
@@ -479,7 +590,7 @@ function docBodyHTML(C){
   return `<div class="p-head">${emb}
   <div class="org"><b>${maskHTML('ИНТЕРНАЦИОНАЛЬНАЯ ИССЛЕДОВАТЕЛЬСКАЯ ГРУППА (ИИГ)')}</b><br>${C.place}</div></div>
   <div class="p-meta"><span>ДАТА: ${C.date}</span><span>${maskHTML('ФОРМА ИИГ-К/7 · СЕКРЕТНО')}</span></div>
-  <h2 class="doc">${maskHTML(C.title)}</h2><div class="doc-num">${maskHTML('ДОКУМЕНТ '+C.number+' · АРХИВНАЯ КОПИЯ')}</div>
+  <h2 class="doc">${maskHTML(C.title)}${C.cls&&C.cls.length?'<br><span style="font-size:10px;letter-spacing:.3em">СТЕПЕНЬ СЕКРЕТНОСТИ: '+maskHTML(C.cls.join(' · '))+'</span>':''}</h2><div class="doc-num">${maskHTML('ДОКУМЕНТ '+C.number+' · АРХИВНАЯ КОПИЯ')}</div>
   <p class="pre">${maskHTML(C.preamble)}</p>${C.clauses.map((t,i)=>`<div class="clause">${i+1}. ${maskHTML(t)}</div>`).join('')}
   <div class="clause">${C.clauses.length+1}. ${maskHTML(C.deadline)}</div>
   <div style="margin:14px 0;border:1px solid var(--red-d);background:rgba(163,22,33,.06);padding:9px 12px;font-size:11px"><b style="color:var(--red-d)">${maskHTML(C.reward.split(':')[0]+':')}</b>${maskHTML(C.reward.split(':').slice(1).join(':'))}</div>
@@ -502,30 +613,48 @@ $('#btnUpgrade').addEventListener('click',()=>{if(currentLevel>=3){$('#barNote')
   $('#upgradePrompt').classList.add('show');$('#upgradeCode').value='';$('#upgradeErr').textContent='';$('#upgradeCode').focus();});
 $('#upgradeCancel').addEventListener('click',()=>$('#upgradePrompt').classList.remove('show'));
 $('#upgradeConfirm').addEventListener('click',()=>{const code=$('#upgradeCode').value.trim().toUpperCase();
-  if(CONFIG.UPGRADE_CODES[code]&&CONFIG.UPGRADE_CODES[code]===currentLevel+1){applyLevel(currentLevel+1);$('#upgradePrompt').classList.remove('show');beep(880,.15);beep(1320,.2);}
+  if(CONFIG.UPGRADE_CODES[code]&&CONFIG.UPGRADE_CODES[code]===currentLevel+1){logSecret('Код повышения допуска',code,'уровень '+(currentLevel+1));dbLog('Допуск повышен до уровня '+(currentLevel+1));applyLevel(currentLevel+1);$('#upgradePrompt').classList.remove('show');beep(880,.15);beep(1320,.2);}
   else if(CONFIG.UPGRADE_CODES[code]&&CONFIG.UPGRADE_CODES[code]>currentLevel+1){$('#upgradeErr').textContent='ОШИБКА: код позволяет повысить допуск только на один уровень.';beep(140,.2,'sawtooth',.1);}
   else{$('#upgradeErr').textContent='ОТКАЗ: неверный код повышения допуска.';beep(140,.25,'sawtooth',.12);document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),400);}});
 $('#upgradeCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('#upgradeConfirm').click();if(e.key==='Escape')$('#upgradeCancel').click();});
 
 let tries=0;
-$('#gateBtn').addEventListener('click',async()=>{const pass=$('#gatePass').value;
+$('#gateBtn').addEventListener('click',async()=>{const s=lockState();
+  if(s.until>Date.now()){const left=Math.ceil((s.until-Date.now())/1000);
+    $('#gateErr').textContent='ЗАБЛОКИРОВАНО: канал закрыт на перебор кодов. Повторите через '+left+' с.';beep(90,.3,'sawtooth',.12);return;}
+  const pass=$('#gatePass').value;
+  if(!pass){$('#gateErr').textContent='ОШИБКА: введите код доступа.';return;}
   if(!CONFIG.CIPHER){$('#gateErr').textContent='ОШИБКА: В ТЕРМИНАЛЕ НЕТ ЗАШИФРОВАННОГО ДОКУМЕНТА (CIPHER пуст).';return;}
-  try{CONTRACT=await decryptJSON(CONFIG.CIPHER,pass);tries=0;beep(660,.1);beep(990,.15);
+  $('#gateBtn').disabled=true;$('#gateErr').textContent='ПРОВЕРКА КЛЮЧА · PBKDF2-SHA256 150000 ИТЕРАЦИЙ…';
+  try{CONTRACT=await decryptJSON(CONFIG.CIPHER,pass);tries=0;sessionTries=0;gateRegisterOk();logSecret('Ключ шлюза',pass,'допуск '+currentLevel);dbLog('Шлюз открыт: допуск подтверждён');
+    beep(660,.1);beep(990,.15);
     $('#gate').classList.add('hidden');showContract();}
-  catch(e){tries++;document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),400);
-    beep(140,.25,'sawtooth',.12);$('#gateErr').textContent='ОТКАЗ: неверный код доступа. Попыток с ошибками: '+tries;$('#gatePass').value='';}});
+  catch(e){tries++;sessionTries++;gateRegisterFail();document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),400);
+    beep(140,.25,'sawtooth',.12);$('#gateErr').textContent=gateLockInfo();$('#gatePass').value='';
+    if(sessionTries>=15){$('#gateErr').textContent='КАНАЛ ПЕРЕХВАЧЕН: зафиксирована попытка подбора ключа. Терминал уходит в режим тишины.';
+      dbLog('Антилом: '+sessionTries+' неудачных попыток за сессию — терминал обесточен');
+      setTimeout(()=>{$('#gate').innerHTML='<div style="padding:40px;color:var(--red-glow);font-size:12px;letter-spacing:.2em">СВЯЗЬ ПРЕКРАЩЕНА · ПЕРЕЗАГРУЗИТЕ ТЕРМИНАЛ</div>';},1500);}
+    }
+  finally{$('#gateBtn').disabled=false;}});
 $('#gatePass').addEventListener('keydown',e=>{if(e.key==='Enter')$('#gateBtn').click();});
-function showContract(){$('#screenContract').classList.remove('hidden');renderTexts(CONTRACT);applyLevel(currentLevel);}
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function showContract(){
+  if(CONTRACT&&!CONTRACT.signedAt)CONTRACT.signedAt=Date.now();
+  $('#screenContract').classList.remove('hidden');renderTexts(CONTRACT);applyLevel(currentLevel);
+  const t=$('#timerLine');if(t){const c=contractCountdown(CONTRACT.signedAt);t.textContent=c.text;t.style.color=c.expired?'var(--red-glow)':'var(--amber)';}}
 
 function initCurator(){const P=CONFIG.PLAIN||PRESET;const set=(id,v)=>$('#'+id).value=v||'';
   set('c_id',CONFIG.PLAIN?CONFIG.DOC_ID:PRESET.id);set('c_number',P.number);set('c_date',P.date);set('c_place',P.place);set('c_title',P.title);
+  set('c_cls',(P.cls||[]).join(', '));
   set('c_pre',P.preamble);set('c_clauses',(P.clauses||[]).join('\n'));set('c_reward',P.reward);set('c_deadline',P.deadline);set('c_sign',P.signatory);
   $('#c_encrypt').addEventListener('click',async()=>{const pass=$('#c_pass').value.trim();
     if(pass.length<4){alert('Код доступа: минимум 4 символа.');return;}
     const obj={number:$('#c_number').value,date:$('#c_date').value,place:$('#c_place').value,title:$('#c_title').value,
+      cls:$('#c_cls').value.split(',').map(s=>s.trim()).filter(Boolean),
       preamble:$('#c_pre').value,clauses:$('#c_clauses').value.split('\n').map(s=>s.trim()).filter(Boolean),
       reward:$('#c_reward').value,deadline:$('#c_deadline').value,signatory:$('#c_sign').value};
     const blob=await encryptJSON(obj,pass);
+    logSecret('Выданный ключ куратором',pass,'DOC_ID '+$('#c_id').value.trim());dbLog('Куратор: сгенерирован шифртекст для DOC_ID '+$('#c_id').value.trim());
     $('#cipherOut').value=`DOC_ID: "${$('#c_id').value.trim()}",\nCIPHER: "${blob}",\nPLAIN: null,`;
     beep(880,.1);beep(1320,.2);});
   $('#c_copy').addEventListener('click',()=>{const t=$('#cipherOut');t.select();try{document.execCommand('copy');}catch(e){}
@@ -536,11 +665,12 @@ const valid=()=>$('#callsign').value.trim().length>=3&&$('#agree').checked;
   $('#agree').addEventListener(ev,()=>$('#btnAccept').disabled=!valid());});
 $('#btnAccept').addEventListener('click',()=>{if(busy||!valid())return;busy=true;
   const signer=$('#callsign').value.trim();
-  const rec={id:CONFIG.DOC_ID,number:CONTRACT.number,signer,ts:Date.now(),status:'ПРИНЯТ · ОРИГИНАЛ СОЖЖЁН'};
-  dbPut(rec);
+  const rec={id:CONFIG.DOC_ID,number:CONTRACT.number,signer,ts:Date.now(),status:'ПРИНЯТ · ОРИГИНАЛ СОЖЖЁН',clr:currentLevel};
+  dbPut(rec);dbLog('Контракт '+CONFIG.DOC_ID+' принят исполнителем «'+signer+'»');
   $('#btnAccept').disabled=true;$('#btnDecline').disabled=true;$('#btnUpgrade').disabled=true;
   $('#barNote').innerHTML=maskHTML('ПРОТОКОЛ ИИГ-П01 ЗАПУЩЕН...');refreshRG();
   $('#signerPrint').textContent=signer;
+  const rk=$('#agentRank');if(rk){rk.textContent='ДОСЬЕ: '+agentRank(signer)+' · КОНТРАКТОВ В РЕЕСТРЕ: '+(dbLoad().records.length+1);rk.style.display='block';}
   setTimeout(()=>{$('#stamp').classList.add('slam');document.body.classList.add('shake');beep(70,.25,'sine',.2);noise(.12,.12,300);setTimeout(()=>document.body.classList.remove('shake'),400);},500);
   setTimeout(()=>{const h=$('#signHand');h.textContent=signer;h.classList.add('show');beep(880,.05);beep(660,.06);},1300);
   const L=$('#lighter');
@@ -550,7 +680,32 @@ $('#btnAccept').addEventListener('click',()=>{if(busy||!valid())return;busy=true
   setTimeout(()=>{L.classList.add('flame-on');$('#lflame2').style.opacity=1;beep(300,.3,'sawtooth',.03);},3100);
   setTimeout(()=>{L.classList.add('touch');},3700);
   setTimeout(()=>burn(rec),4400);});
-$('#btnDecline').addEventListener('click',()=>{if(busy)return;$('#barNote').textContent='КОНТРАКТ ОТКЛОНЁН. ДОКУМЕНТ ОСТАЁТСЯ В ТЕРМИНАЛЕ.';$('#btnDecline').disabled=true;beep(180,.2,'sine',.1);});
+$('#btnDecline').addEventListener('click',()=>{if(busy)return;$('#barNote').textContent='КОНТРАКТ ОТКЛОНЁН. ДОКУМЕНТ ОСТАЁТСЯ В ТЕРМИНАЛЕ.';$('#btnDecline').disabled=true;beep(180,.2,'sine',.1);dbLog('Исполнитель отклонил контракт '+CONFIG.DOC_ID);});
+
+// ─── ДОЧЕСВЯЗЬ: приём донесений по каналу «Неизвестный» (п.2 контракта) ───
+let repTimer=null,repCooldownUntil=0;
+const REP_TOKEN_MAX=8,REP_TOKEN_MS=30000; // лимит: 8 сигналов, далее 30-секундная кулдаун-пауза
+$('#btnSendRep').addEventListener('click',async()=>{const txt=$('#repText').value.trim();
+  if(txt.length<5){$('#repStatus').textContent='СИГНАЛ НЕ ПРИНЯТ: текст донесения слишком короткий.';beep(140,.2,'sawtooth',.1);return;}
+  if(Date.now()<repCooldownUntil){const left=Math.ceil((repCooldownUntil-Date.now())/1000);
+    $('#repStatus').textContent='ЧАСТОТА ЗАНЯТА: следующая передача возможна через '+left+' с.';beep(140,.15,'sawtooth',.08);return;}
+  const cls=$('#repClass').value,prio=cls.indexOf('ПОХОД')>=0||cls==='СИГНАЛ О БЕДЕ';
+  $('#btnSendRep').disabled=true;$('#repStatus').textContent='ПЕРЕДАЧА ПО ДУПЛЕКСНОМУ КАНАЛУ…';noise(.3,.05,1500);
+  clearTimeout(repTimer);
+  repTimer=setTimeout(async()=>{const agent=$('#callsign').value.trim()||agentRank($('#callsign').value.trim());
+    const rep={id:'REP-'+Date.now().toString(36).toUpperCase(),ts:Date.now(),cls,text:txt,agent,prio};
+    let enc=null;try{enc=await encryptJSON(rep,CONFIG.DOC_ID+'|'+currentLevel);}catch(e){}
+    dbAddReport(enc?{...rep,text:null,enc}:rep);dbLog('Принято донесение ('+cls+') по каналу «Неизвестный»');
+    $('#repStatus').innerHTML='<span style="color:#9fe89f">✔ СИГНАЛ ПРИНЯТ'+(prio?' · ПРИОРИТЕТНАЯ СТАВКА':'')+'</span>';
+    $('#repText').value='';
+    beep(880,.06);setTimeout(()=>beep(1180,.08),120);
+    setTimeout(()=>{$('#repStatus').textContent='— переписка удалена согласно п.5 —';},4000);
+    $('#btnSendRep').disabled=false;
+    // антифлуд: после серии из 8 сигналов — принудительная пауза на частоте
+    window._repBurst=(window._repBurst||0)+1;
+    if(!prio&&window._repBurst>=REP_TOKEN_MAX){repCooldownUntil=Date.now()+REP_TOKEN_MS;window._repBurst=0;
+      $('#repStatus').textContent='ЧАСТОТА ЗАНЯТА: эфир остывает '+REP_TOKEN_MAX/2+' с. (антифлуд канала)';}},
+    1200+(prio?0:900));});
 
 function burn(rec){const paper=$('#paper'),box=$('#paperBox'),ch=$('#charRing'),gl=$('#glowRing');
   const W=box.offsetWidth,H=box.offsetHeight,bx=W*.68,by=H*.80;
@@ -580,11 +735,18 @@ function burn(rec){const paper=$('#paper'),box=$('#paperBox'),ch=$('#charRing'),
     setTimeout(()=>{$('#doneInfo').innerHTML=`КОНТРАКТ ${maskHTML(rec.number)}<br>ИСПОЛНИТЕЛЬ: <b style="color:#ffb347">${rec.signer}</b><br>ВРЕМЯ УНИЧТОЖЕНИЯ: ${new Date(rec.ts).toLocaleString('ru-RU')}`;
       $('#donePanel').classList.add('show');refreshRG();beep(520,.15,'sine',.08);beep(780,.25,'sine',.08);},1300);}}
 
-function showArchive(){$('#screenContract').classList.add('hidden');$('#gate').classList.add('hidden');
+function showArchive(){const d=dbLoad();$('#screenContract').classList.add('hidden');$('#gate').classList.add('hidden');
   $('#screenArchive').classList.remove('hidden');
-  $('#recList').innerHTML=dbLoad().records.map(r=>`<div class="recCard"><b>${maskHTML('РЕЕСТР ИИГ · ЗАПИСЬ ОБ УНИЧТОЖЕНИИ')}</b><br>Документ: ${maskHTML(r.number)}<br>Исполнитель: ${r.signer}<br>Статус: ${r.status}</div>`).join('');
+  const recs=d.records.slice().sort((a,b)=>b.ts-a.ts);
+  const agents=new Set(recs.map(r=>(r.signer||'').toLowerCase())).size;
+  $('#statLine').textContent='РЕЕСТР: ЗАПИСЕЙ — '+recs.length+' · ИНФОРМАТОРОВ — '+agents+' · ДОНЕСЕНИЙ — '+(d.reports||[]).length;
+  if(d.tampered){dbLog('КОНТРОЛЬ ЦЕЛОСТНОСТИ: выявлено внешнее изменение реестра (несовпадение контрольной суммы)');d.tampered=false;dbSave(d);}
+  $('#recList').innerHTML=(dbTamperFlag?'<div class="recCard" style="border-color:var(--red-glow)"><b style="color:var(--red-glow)">⚠ КОНТРОЛЬ ЦЕЛОСТНОСТИ</b><br>Обнаружено внесение изменений в реестр вне терминала. Факт зафиксирован в журнале.</div>':'')+recs.map(r=>{const age=Math.floor((Date.now()-r.ts)/86400000);
+    return `<div class="recCard"><b>${maskHTML('РЕЕСТР ИИГ · ЗАПИСЬ ОБ УНИЧТОЖЕНИИ')}</b><br>Документ: ${maskHTML(esc(r.number))}<br>Исполнитель: <span style="color:var(--amber)">${esc(r.signer)}</span> · звание: ${agentRank(r.signer)}<br>Статус: ${esc(r.status)}<br>Уничтожен: ${new Date(r.ts).toLocaleString('ru-RU')} · в архиве ${age} сут.</div>`;}).join('')||'<div class="recCard">РЕЕСТР ПУСТ.</div>';
+  const rl=$('#repList');if(rl){rl.innerHTML=(d.reports||[]).slice().reverse().map(p=>
+    `<div class="recCard"><b>ДОНЕСЕНИЕ · ${esc(p.cls)}</b><br>От: ${esc(p.agent)} · ${new Date(p.ts).toLocaleString('ru-RU')}${p.prio?' · <span style="color:var(--red-glow)">ПРИОРИТЕТ</span>':''}<br>${p.enc?'<i>текст в реестре не хранится (п.5: переписка удаляется после прочтения) · метка '+esc(p.id)+'</i>':esc(p.text).replace(/\n/g,'<br>')}</div>`).join('');}
   refreshRG();
-  if(IS_ADMIN)$('#copyBtnAdmin').classList.remove('hidden');}
+  if(IS_ADMIN){$('#copyBtnAdmin').classList.remove('hidden');['exportBtn','importBtn','importFile','wipeBtn'].forEach(id=>{const el=$('#'+id);if(el)el.classList.remove('hidden');});}}
 $('#copyBtnAdmin').addEventListener('click',()=>{
   if(!CONFIG.CIPHER){
     if(!CONFIG.PLAIN){alert('Нет данных: CIPHER пуст и PLAIN отключён.');return;}
@@ -597,14 +759,27 @@ $('#copyBtnAdmin').addEventListener('click',()=>{
 $('#copyClose').addEventListener('click',()=>{$('#copyOverlay').classList.remove('show');$('#copyPaper').innerHTML='';});
 
 boot(()=>{$('#hdr').classList.remove('hidden');$('#ftr').classList.remove('hidden');
-  registerOrig();applyLevel(currentLevel);
-  if(IS_ADMIN)$('#resetBtn').classList.remove('hidden');
+  registerOrig();applyLevel(currentLevel);dbLog('Терминал загружен · допуск '+currentLevel+' · сессия '+Date.now().toString(36).toUpperCase());
+  if(IS_ADMIN){$('#resetBtn').classList.remove('hidden');$('#regStats').classList.remove('hidden');
+    const d=dbLoad();const sec=secLoad();
+    $('#regStats').innerHTML='РЕЕСТР: записей — '+d.records.length+' · донесений — '+(d.reports||[]).length+' · строк журнала — '+(d.logs||[]).length+
+      (()=>{try{const raw=JSON.parse(localStorage.getItem(DB_KEY)||'null');return(raw&&raw.chk&&dbChecksum(raw)!==raw.chk)?' · <b style="color:var(--red-glow)">ЦЕЛОСТНОСТЬ НАРУШЕНА</b>':'';}catch(e){return'';}})()+
+      '<br>ЖУРНАЛ ОПЕРАЦИЙ БД (последние):<br>'+((d.logs||[]).slice(-10).reverse().map(l=>'['+new Date(l.ts).toLocaleString('ru-RU')+'] '+esc(l.msg)).join('<br>')||'—')+
+      '<br>ЖУРНАЛ АКТИВНОСТИ (последние):<br>'+sec.slice(-8).reverse().map(s=>'['+new Date(s.ts).toLocaleString('ru-RU')+'] '+esc(s.type)+': '+esc(s.value)+' — '+esc(s.detail)).join('<br>');}
   if(IS_CURATOR){initCurator();$('#curator').classList.remove('hidden');return;}
   if(dbFind(CONFIG.DOC_ID)){showArchive();return;}
-  if(CONFIG.CIPHER){$('#gate').classList.remove('hidden');}
+  if(CONFIG.CIPHER){$('#gate').classList.remove('hidden');const s=lockState();if(s.until>Date.now()){$('#gateErr').textContent='ЗАБЛОКИРОВАНО: канал закрыт на перебор кодов.';}}
   else if(CONFIG.PLAIN){CONTRACT=CONFIG.PLAIN;$('#demoWarn').classList.remove('hidden');showContract();}
   else{$('#gate').classList.remove('hidden');$('#gateErr').textContent='НЕТ ДАННЫХ: CIPHER пуст и PLAIN отключён.';}});
 $('#resetBtn').addEventListener('click',()=>{if(confirm(sanitizeStatic('Сбросить БД контрактов ИИГ на этом устройстве?',currentLevel))){localStorage.removeItem(DB_KEY);location.href=location.pathname;}});
+$('#exportBtn').addEventListener('click',()=>{const withSec=confirm('Включить в резервную копию журнал перехваченных ключей?\n(рекомендуется: нет — ключи останутся только на этом устройстве)');
+  const blob=new Blob([dbExport(withSec)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='iig_db_backup_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);dbLog('Админ: экспорт БД выполнен'+(withSec?' (с ключами)':''));});
+$('#importBtn').addEventListener('click',()=>$('#importFile').click());
+$('#importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{dbImport(r.result);alert('Импорт выполнен: записи объединены.');location.reload();}catch(err){alert('ОТКАЗ: '+err.message);}};r.readAsText(f);});
+$('#wipeBtn').addEventListener('click',()=>{if(!confirm('ПОЛНОЕ СТИРАНИЕ: будут удалены реестр, донесения, журнал и перехваченные ключи. Продолжить?'))return;
+  [DB_KEY,SECRETS_KEY,LOCK_KEY,'clearance_level'].forEach(k=>localStorage.removeItem(k));location.href=location.pathname;});
 $('#sndBtn').addEventListener('click',()=>{soundOn=!soundOn;$('#sndBtn').textContent='ЗВУК: '+(soundOn?'ВКЛ':'ВЫКЛ');});
 </script>
 </body>
