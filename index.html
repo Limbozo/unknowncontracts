@@ -105,9 +105,17 @@ p.pre{font-size:12px;line-height:1.6;text-align:justify;margin-bottom:12px;text-
 #stamp.slam{transform:scale(1) rotate(-14deg);opacity:1}
 .p-foot{margin-top:22px;font-size:8.5px;color:#6b5b48;letter-spacing:.06em;text-align:center;font-family:var(--mono)}
 
-#lighter{position:absolute;z-index:9;left:0;top:0;width:64px;height:104px;pointer-events:none;opacity:0;transform:translate(var(--lx,60%),calc(var(--ly,86%) + 120px));transition:transform .8s ease,opacity .4s}
-#lighter.show{opacity:1;transform:translate(var(--lx),calc(var(--ly) + 40px))}
-#lighter.touch{transform:translate(var(--lx),var(--ly)) rotate(-14deg)}
+/* Зажигалка подносится СВЕРХУ (огонь сжигает лист сверху вниз).
+   Позиция касания (--lx/--ly) задаётся скриптом в пикселях; если скрипт ещё не отработал —
+   используются безопасные дефолты в процентах от размеров контейнера */
+#lighter{position:absolute;z-index:9;left:0;top:0;width:64px;height:104px;pointer-events:none;opacity:0;transform:translate(var(--lx,60%),calc(var(--ly,3%) - 170px));transition:transform .8s cubic-bezier(.3,.7,.4,1),opacity .4s}
+#lighter.show{opacity:1;transform:translate(var(--lx),calc(var(--ly) - 60px))}
+#lighter.touch{transform:translate(var(--lx),var(--ly)) rotate(14deg)}
+/* «призрак» схлопнутого листа: на время схлопывания держит занятую высоту контейнера,
+   затем гаснет синхронно с листом — вёрстка не прыгает. Сам #paper — авто-высоты, текст виден целиком */
+#paperGhost{position:absolute;inset:0;z-index:1;visibility:hidden;background:var(--paper);box-shadow:0 20px 50px rgba(0,0,0,.75)}
+#paperGhost.active{visibility:visible;height:auto;transition:opacity 1.2s ease,filter 1.2s ease}
+#paperGhost.fade{opacity:0;filter:grayscale(1) brightness(.3)}
 #lighter svg{width:100%;height:100%;overflow:visible}
 #lid{transform-origin:14px 34px;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
 #lighter.open #lid{transform:rotate(-105deg)}
@@ -357,6 +365,7 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
       <div class="p-foot" id="docFoot">ДОКУМЕНТ СОСТАВЛЕН В ДВУХ ЭКЗЕМПЛЯРАХ · ПОСЛЕ ПОДПИСАНИЯ ОРИГИНАЛ УНИЧТОЖАЕТСЯ СОГЛАСНО ПРОТОКОЛУ ИИГ-П01</div>
     </div>
     <div id="charRing"></div><div id="glowRing"></div>
+    <div id="paperGhost" aria-hidden="true"></div>
     <div id="lighter"><svg viewBox="0 0 74 120">
       <g id="lid"><rect x="12" y="18" width="50" height="20" rx="5" fill="#b9b4a6" stroke="#3c3831" stroke-width="2"/></g>
       <rect x="24" y="30" width="26" height="16" rx="3" fill="#8f8a7d" stroke="#3c3831" stroke-width="2"/>
@@ -385,7 +394,7 @@ footer{position:relative;z-index:5;text-align:center;padding:22px 10px 36px;font
     <div class="row" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
       <label style="font-size:11px;letter-spacing:.12em;color:var(--red-glow)">ДОЧЕСВЯЗЬ · КАНАЛ «НЕИЗВЕСТНЫЙ»:</label>
       <select id="repClass" style="background:#140b0b;border:1px solid var(--red-d);color:var(--paper);font-family:var(--mono);font-size:11px;padding:6px">
-        <option>ДОНЕСЕНИЕ</option><option>СВЕДЕНИЯ О ПОХОДЕ ТРЕТЬЕЙ СТОРОНЫ</option><option>АРТЕФАКТ / АНОМАЛИЯ</option><option>МУТАНТЫ</option><option>ФРАГМЕНТ «ОСКОЛ»</option><option>ПАТРУЛЬ ОКСОП</option><option>СИГНАЛ О БЕДЕ</option>
+        <option>ДОНЕСЕНИЕ</option><option>СВЕДЕНИЯ О ПОХОДЕ ТРЕТЬЕЙ СТОРОНЫ</option><option>АРТЕФАКТ / АНОМАЛИЯ</option><option>МУТАНТЫ</option><option>ПАТРУЛЬ ОКСОП</option><option>СИГНАЛ О БЕДЕ</option>
       </select></div>
     <textarea id="repText" maxlength="2000" placeholder="текст донесения в свободной форме (передаётся немедленно, без задержек)…" style="width:100%;min-height:60px;background:#140b0b;border:1px solid var(--red-d);color:var(--paper);font-family:var(--mono);font-size:12px;padding:8px;outline:none"></textarea>
     <div class="btns" style="margin-top:10px"><button class="act" id="btnSendRep">📡 Передать сигнал</button></div>
@@ -448,7 +457,7 @@ const PRESET = {
   cls: ["ОСОБЫЙ"],
   preamble: "Интернациональная Исследовательская Группа (далее — «Заказчик»), в лице уполномоченного представителя полевого подразделения (позывной «Неизвестный»), и субъект, указанный в разделе «Исполнитель» (далее — «Исполнитель», информатор), заключили настоящий Контракт о нижеследующем. Истинное наименование Заказчика засекречено для Исполнителя согласно уровню допуска настоящего документа. Исполнитель подтверждает, что осведомлён о возможных рисках и действует добровольно. Любое несанкционированное нарушение условий договора повлечёт за собой физическое устранение ответственного лица, нарушившего договор.",
   clauses: [
-    "<b>Предмет контракта.</b> Исполнитель обязуется самостоятельно и за свой риск собирать и передавать Заказчику информацию, могущую представлять оперативную ценность: сведения о готовящихся, снаряжаемых и идущих походах (выходах) третьих сторон в Зону и в лабораторные комплексы — маршруты, сроки, состав, снаряжение и цели групп; данные об артефактах, аномалиях, мутантах и фрагментах «ОСКОЛ»; сведения о перемещениях патрулей ОКСОП и официальных научных групп; иную информацию, представляющую интерес для Заказчика. Исполнитель является информатором и действует под присвоенным Заказчиком псевдонимом.",
+    "<b>Предмет контракта.</b> Исполнитель обязуется самостоятельно и за свой риск собирать и передавать Заказчику информацию, могущую представлять оперативную ценность: сведения о готовящихся, снаряжаемых и идущих походах (выходах) третьих сторон в Зону и в лабораторные комплексы — маршруты, сроки, состав, снаряжение и цели групп; данные об артефактах, аномалиях и мутантах; сведения о перемещениях патрулей ОКСОП и официальных научных групп; иную информацию, представляющую интерес для Заказчика. Исполнитель является информатором и действует под присвоенным Заказчиком псевдонимом.",
     "<b>Порядок связи.</b> Связь поддерживается исключительно через контакт «Неизвестный» в КПК Исполнителя. Донесения передаются в свободной форме, без задержек. Подтверждение приёма — ответный сигнал «Сигнал принят». Сведения о готовящихся походах третьих сторон передаются НЕМЕДЛЕННО по факту их получения, не дожидаясь запроса Заказчика. Исполнитель не знает истинного наименования Заказчика и не вправе пытаться его установить, равно как и установить личность контакта «Неизвестный».",
     "<b>Специальное оборудование.</b> Заказчик устанавливает в КПК Исполнителя инструмент «Прослушка» — комплекс перехвата и трансляции, работающий постоянно и в автоматическом режиме. Исполнитель обязан круглосуточно поддерживать КПК с «Прослушкой» во включённом состоянии: не выключать прибор, не вскрывать корпус, не снимать и не перепрошивать модуль, не передавать КПК третьим лицам и не предупреждать кого-либо о его существовании. Канал дуплексный: Заказчик получает информацию из окружения Исполнителя постоянно, в том числе без участия Исполнителя. Вмешательство в работу «Прослушки» приравнивается к измене.",
     "<b>Утрата КПК и тяжёлое ранение.</b> При утрате, уничтожении КПК либо тяжёлом ранении, лишающем Исполнителя возможности пользоваться КПК, Исполнитель ОБЯЗАН не позднее 24 часов с момента появления физической возможности восстановить связь с Заказчиком любым доступным способом: резервная частота, посредники, тайник-сходняк, условный сигнал в согласованной точке. До момента восстановления связи контракт сохраняет силу. «Прослушка» в утерянном КПК переходит в автономный режим маяка: возврат прибора осуществляется силами Заказчика. Неявка на связь при физической возможности, а равно передача КПК третьим лицам, расценивается как измена с последствиями по п.7 настоящего контракта.",
@@ -846,9 +855,10 @@ $('#gateBtn').addEventListener('click',async()=>{const s=lockState();
     $('#gateErr').textContent='ЗАБЛОКИРОВАНО: канал закрыт на перебор кодов. Повторите через '+left+' с.';beep(90,.3,'sawtooth',.12);return;}
   const pass=$('#gatePass').value;
   if(!pass){$('#gateErr').textContent='ОШИБКА: введите код доступа.';return;}
-  if(!CONFIG.CIPHER){$('#gateErr').textContent='ОШИБКА: В ТЕРМИНАЛЕ НЕТ ЗАШИФРОВАННОГО ДОКУМЕНТА (CIPHER пуст).';return;}
+  const srcBlob=(window.__KPK&&window.__KPK.blob)||CONFIG.CIPHER; // ссылка КПК приоритетнее встроенного CIPHER
+  if(!srcBlob){$('#gateErr').textContent='ОШИБКА: В ТЕРМИНАЛЕ НЕТ ЗАШИФРОВАННОГО ДОКУМЕНТА (CIPHER пуст).';return;}
   $('#gateBtn').disabled=true;$('#gateErr').textContent='ПРОВЕРКА КЛЮЧА · PBKDF2-SHA256 150000 ИТЕРАЦИЙ…';
-  try{CONTRACT=await decryptJSON(CONFIG.CIPHER,pass);tries=0;sessionTries=0;gateRegisterOk();logSecret('Ключ шлюза',pass,'допуск '+currentLevel);dbLog('Шлюз открыт: допуск подтверждён');
+  try{CONTRACT=await decryptJSON(srcBlob,pass);tries=0;sessionTries=0;gateRegisterOk();logSecret('Ключ шлюза',pass,'допуск '+currentLevel);dbLog(window.__KPK?'Шлюз открыт: контракт по ссылке КПК':'Шлюз открыт: допуск подтверждён');
     beep(660,.1);beep(990,.15);
     $('#gate').classList.add('hidden');showContract();}
   catch(e){tries++;sessionTries++;gateRegisterFail();bodyShake();
@@ -882,6 +892,143 @@ function initCurator(){const P=CONFIG.PLAIN||PRESET;const set=(id,v)=>$('#'+id).
   $('#c_copy').addEventListener('click',()=>{const t=$('#cipherOut');t.select();try{document.execCommand('copy');}catch(e){}
     if(navigator.clipboard)navigator.clipboard.writeText(t.value);});}
 
+// ─── КУРАТОР v2: WYSIWYG-редактор текста, пункты как отдельные поля, черновик, живой предпросмотр, ссылка для КПК ───
+const DRAFT_KEY='iig_cur_draft';
+function initCuratorUI(){
+  const $c=id=>document.getElementById(id);
+  const CE=['c_pre','c_reward','c_deadline'].map($c).filter(Boolean);
+  const list=$c('c_list'),hidden=$c('c_clauses'),liveEl=$c('c_live');
+  let liveOn=false;
+  // служебное скрытое поле — всегда синхронно с редакторами (источник данных для шифрования/ссылки)
+  function syncHidden(){if(!hidden)return;
+    hidden.value=[...list.querySelectorAll('.cl-inp')].map(i=>i.value.trim()).filter(Boolean).join('\n')||'';}
+  // нормализация вставляемого текста: без чужих стилей/скриптов (XSS-гигиена редактора)
+  CE.forEach(el=>el.addEventListener('paste',e=>{e.preventDefault();
+    const t=((e.clipboardData||window.clipboardData)||{}).getData&&((e.clipboardData||window.clipboardData)).getData('text/plain')||'';
+    try{document.execCommand('insertText',false,t);}catch(_){}}));
+  // панель форматирования: команды применяются к последнему активному contenteditable
+  let lastCE=CE[0];
+  CE.forEach(el=>el.addEventListener('focus',()=>lastCE=el));
+  document.querySelectorAll('#c_tools .tool-btn').forEach(b=>b.addEventListener('mousedown',e=>e.preventDefault())); // не терять выделение
+  document.querySelectorAll('#c_tools .tool-btn').forEach(b=>b.addEventListener('click',()=>{
+    const el=document.activeElement&&document.activeElement.isContentEditable?document.activeElement:lastCE;
+    if(!el)return;el.focus();const cmd=b.dataset.cmd;
+    try{
+      if(cmd==='bold'||cmd==='italic')document.execCommand(cmd,false,null);
+      else if(cmd==='ul')document.execCommand('insertUnorderedList',false,null);
+      else if(cmd==='p'){document.execCommand('formatBlock',false,'p');document.execCommand('insertLineBreak',false,null);}
+      else if(cmd==='clean')document.execCommand('removeFormat',false,null);
+    }catch(e){toast('Команда не поддержана браузером','warn');}
+    stats();updateLive();}));
+  // счётчики слов/знаков + живой предпросмотр на любом вводе
+  function stats(){if(!$c('c_words'))return;
+    const all=CE.map(el=>el.textContent).join(' ')+
+      ' '+[...list.querySelectorAll('.cl-inp')].map(i=>i.value).join(' ');
+    const words=(all.match(/\S+/g)||[]).length;
+    $c('c_words').textContent='слов: '+words;$c('c_chars').textContent='знаков: '+all.replace(/\s/g,'').length;}
+  ['input','change'].forEach(ev=>{CE.forEach(el=>el.addEventListener(ev,()=>{stats();updateLive();}));
+    if(list)list.addEventListener(ev,()=>{syncHidden();stats();updateLive();});});
+  // конструктор пунктов
+  function addRow(text){if(!list)return;
+    const row=document.createElement('div');row.className='cl-row';
+    const num=document.createElement('span');num.className='cl-num';
+    const inp=document.createElement('textarea');inp.className='cl-inp';inp.rows=2;inp.value=text||'';
+    const del=document.createElement('button');del.type='button';del.className='cl-del';del.textContent='✕';
+    del.title='Удалить пункт';
+    del.addEventListener('click',()=>{confirmAct(del,'Точно удалить пункт?',()=>{row.remove();renumber();syncHidden();stats();updateLive();toast('Пункт удалён','ok',1500);});});
+    row.append(num,inp,del);list.appendChild(row);renumber();}
+  function renumber(){if(!list)return;
+    [...list.querySelectorAll('.cl-row')].forEach((r,i)=>{const n=r.querySelector('.cl-num');if(n)n.textContent=(i+1)+'.';});}
+  function move(dir){const rows=[...(list?list.children:[])];
+    const a=document.activeElement&&document.activeElement.closest?document.activeElement.closest('.cl-row'):null;
+    if(!a)return;const i=rows.indexOf(a),j=i+dir;
+    if(i<0||j<0||j>=rows.length)return;
+    dir<0?list.insertBefore(a,rows[j]):list.insertBefore(rows[j],a);
+    a.querySelector('.cl-inp').focus();renumber();syncHidden();updateLive();}
+  const bAdd=$c('c_addClause');if(bAdd)bAdd.addEventListener('click',()=>{addRow('');syncHidden();
+    const rows=list.querySelectorAll('.cl-inp');rows[rows.length-1]&&rows[rows.length-1].focus();beep(660,.06);});
+  const bUp=$c('c_moveUp');if(bUp)bUp.addEventListener('click',()=>move(-1));
+  const bDn=$c('c_moveDown');if(bDn)bDn.addEventListener('click',()=>move(+1));
+  // живой предпросмотр «как увидит исполнитель»
+  function collect(){return{number:$c('c_number').value,date:$c('c_date').value,place:$c('c_place').value,title:$c('c_title').value,
+    cls:$c('c_cls').value.split(',').map(s=>s.trim()).filter(Boolean),
+    preamble:CE[0]?CE[0].innerHTML:'',clauses:(hidden?hidden.value:'').split('\n').filter(Boolean),
+    reward:CE[1]?CE[1].innerHTML:'',deadline:CE[2]?CE[2].innerHTML:'',signatory:$c('c_sign').value};}
+  function updateLive(){if(!liveOn||!liveEl)return;
+    liveEl.innerHTML='<div class="papermini">'+docBodyHTML(collect())+'</div>';}
+  const bLive=$c('c_liveToggle');
+  if(bLive)bLive.addEventListener('click',()=>{liveOn=!liveOn;
+    if(liveEl)liveEl.classList.toggle('show',liveOn);
+    bLive.textContent=(liveOn?'▼ Свернуть':'▶ Живой предпросмотр')+' (как увидит исполнитель с текущим уровнем допуска)';
+    updateLive();beep(liveOn?880:440,.06);});
+  // черновик: автосохранение раз в 15 с + ручные кнопки
+  function saveDraft(silent){try{localStorage.setItem(DRAFT_KEY,JSON.stringify({ts:Date.now(),
+    fields:{c_id:$c('c_id').value,c_number:$c('c_number').value,c_date:$c('c_date').value,c_place:$c('c_place').value,
+      c_title:$c('c_title').value,c_cls:$c('c_cls').value,c_sign:$c('c_sign').value},
+    html:CE.map(el=>el.innerHTML),clauses:(hidden?hidden.value:'')}));
+    if(!silent){$c('c_draftAt').textContent='черновик: '+new Date().toLocaleTimeString('ru-RU');
+      toast('Черновик сохранён в памяти терминала','ok');dbLog('Куратор: сохранён черновик контракта');beep(700,.07);}}catch(e){if(!silent)toast('Черновик не сохранён: хранилище недоступно','warn');}}
+  function loadDraft(){let d=null;try{d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');}catch(e){}
+    if(!d){toast('Черновик не найден','warn');return false;}
+    for(const k in(d.fields||{})){const el=$c(k);if(el)el.value=d.fields[k];}
+    CE.forEach((el,i)=>{if(d.html&&d.html[i]!=null)el.innerHTML=sanitizeHTML(d.html[i]);});
+    if(hidden)hidden.value=d.clauses||'';fillClauseRows(d.clauses||'');
+    $c('c_draftAt').textContent='черновик: '+new Date(d.ts).toLocaleString('ru-RU');
+    toast('Черновик загружен ('+new Date(d.ts).toLocaleString('ru-RU')+')','ok');return true;}
+  function fillClauseRows(str){if(!list)return;list.innerHTML='';
+    (str?str.split('\n'):[]).filter(Boolean).forEach(t=>addRow(t));renumber();}
+  const bSD=$c('c_saveDraft');if(bSD)bSD.addEventListener('click',()=>saveDraft(false));
+  const bLD=$c('c_loadDraft');if(bLD)bLD.addEventListener('click',loadDraft);
+  setInterval(()=>{if(document.hasFocus()&&(hidden?hidden.value:''))saveDraft(true);},15000);
+  // заполнение из PRESET/PLAIN (включая редакторы и список пунктов)
+  const P=CONFIG.PLAIN||PRESET;
+  CE[0]&&(CE[0].innerHTML=sanitizeHTML(P.preamble||''));
+  CE[1]&&(CE[1].innerHTML=sanitizeHTML(P.reward||''));
+  CE[2]&&(CE[2].innerHTML=sanitizeHTML(P.deadline||''));
+  fillClauseRows((P.clauses||[]).join('\n'));syncHidden();stats();
+  // предпросмотр архивной копии текущего набора полей
+  const bPrev=$c('c_preview');
+  if(bPrev)bPrev.addEventListener('click',()=>{$('#copyPaper').innerHTML=docBodyHTML(collect());
+    $('#copyOverlay').classList.add('show');refreshRG();beep(660,.1);});
+  // ─── ССЫЛКА ДЛЯ КПК: контракт целиком передаётся игроку одной ссылкой (шифртекст в URL) ───
+  const bKpk=$c('c_kpk'),linkBox=$c('c_linkBox'),linkInp=$c('c_kpkLink'),qrWrap=$c('qrWrap');
+  if(bKpk)bKpk.addEventListener('click',async()=>{
+    const pass=$c('c_pass').value.trim();
+    if(pass.length<4){toast('Сначала задай КОД ДОСТУПА (мин. 4 символа) — он НЕ попадёт в ссылку','warn');$c('c_pass').focus();return;}
+    const obj=collect();
+    if(!obj.number||!obj.clauses.length){toast('Заполни номер и хотя бы один пункт контракта','warn');return;}
+    bKpk.disabled=true;bKpk.textContent='ШИФРОВАНИЕ…'; // UI-отклик до завершения PBKDF2
+    try{
+      const blob=await encryptJSON(obj,pass);
+      const id=($c('c_id').value.trim()||PRESET.id);
+      const url=location.origin+location.pathname+'?kpk='+encodeURIComponent(id)+'.'+bu64e(ENC.encode(blob));
+      linkInp.value=url;if(linkBox)linkBox.classList.add('show');
+      if(qrWrap)qrWrap.style.display='none',qrWrap.innerHTML='';
+      dbLog('Куратор: сформирована ссылка контракта для КПК · DOC_ID '+id);
+      toast('Ссылка готова. Отправляй её ОТДЕЛЬНО от кода доступа. Срок ссылки ~3 дня (настраивается в генераторе)','ok',5000);
+      beep(880,.1);beep(1320,.2);
+    }catch(e){toast('Не удалось собрать ссылку: '+e.message,'err');}
+    finally{bKpk.disabled=false;bKpk.textContent='📱 Ссылка для КПК игрока';}});
+  const bCopyL=$c('c_copyLink');
+  if(bCopyL)bCopyL.addEventListener('click',async()=>{if(await copyText(linkInp.value))toast('Ссылка скопирована в буфер','ok',1500);else toast('Скопируйте ссылку вручную','warn');});
+  const bQr=$c('c_qrBtn');
+  if(bQr)bQr.addEventListener('click',()=>{if(!qrWrap)return;
+    if(qrWrap.style.display==='block'){qrWrap.style.display='none';qrWrap.innerHTML='';return;}
+    if(renderQR(qrWrap,linkInp.value))qrWrap.style.display='block';});
+  // приёмник ссылки: ?kpk=ID.base64url → тот же шлюз, но документ берётся из ссылки
+  const kpk=Q.get('kpk');
+  if(kpk){try{
+    const dot=kpk.indexOf('.');if(dot<1)throw new Error('формал ссылки');
+    window.__KPK={id:kpk.slice(0,dot),blob:DEC.decode(bu64d(kpk.slice(dot+1)))};
+    const g=$('#gate');if(g){g.classList.remove('hidden');
+      const e1=$('#gateErr');e1&&(e1.textContent='ПОЛУЧЕН ПАКЕТ КОНТРАКТА ПО ДУПЛЕКСНОМУ КАНАЛУ · ОЖИДАЕТ КОДА ДОСТУПА');
+      const p1=$('#gateP');p1&&(p1.innerHTML=maskHTML('ВВЕДИТЕ КОД ДОСТУПА, ПЕРЕДАННЫЙ ОТДЕЛЬНЫМ КАНАЛОМ (п.5 контракта):'));}
+    dbLog('Терминал получил контракт по ссылке исполнителя · метка '+window.__KPK.id);
+  }catch(e){toast('Ссылка контракта повреждена или неверна','err',5000);}}
+  // автозагрузка последнего черновика при входе в режим куратора
+  setTimeout(loadDraft,300);
+}
+
 const valid=()=>$('#callsign').value.trim().length>=3&&$('#agree').checked;
 ['input','change'].forEach(ev=>{$('#callsign').addEventListener(ev,()=>$('#btnAccept').disabled=!valid());
   $('#agree').addEventListener(ev,()=>$('#btnAccept').disabled=!valid());});
@@ -895,7 +1042,11 @@ $('#btnAccept').addEventListener('click',()=>{if(busy||!valid())return;busy=true
   const rk=$('#agentRank');if(rk){rk.textContent='ДОСЬЕ: '+agentRank(signer)+' · КОНТРАКТОВ В РЕЕСТРЕ: '+(dbLoad().records.length+1);rk.style.display='block';}
   setTimeout(()=>{$('#stamp').classList.add('slam');bodyShake(350);beep(70,.25,'sine',.2);noise(.12,.12,300);},500);
   setTimeout(()=>{const h=$('#signHand');h.textContent=signer;h.classList.add('show');beep(880,.05);beep(660,.06);},1300);
-  const L=$('#lighter');
+  const L=$('#lighter'),bx0=$('#paperBox').offsetWidth;
+  // позиция зажигалки: ОГОНЬ ЗАЖИГАЛКИ (верх корпуса, ~y30 в viewBox 74×120) совмещается с верхним краем листа —
+  // лист горит СВЕРХУ ВНИЗ; траектория: сверху из-за края экрана → касание верхней кромки
+  {const bx=bx0*.62,by=26;
+   L.style.setProperty('--lx',(bx-37)+'px');L.style.setProperty('--ly',(by-30)+'px');}
   setTimeout(()=>{L.classList.add('show');beep(1200,.04,'triangle');},2100);
   setTimeout(()=>{L.classList.add('open');beep(1500,.05,'triangle');},2600);
   setTimeout(()=>{L.classList.add('spark');noise(.08,.06,4200);},2900);
@@ -955,8 +1106,10 @@ function burn(rec){const paper=$('#paper'),box=$('#paperBox'),ch=$('#charRing'),
     if(t-lastSpark>260&&k<1){lastSpark=t;beep(2200+Math.random()*1600,.02,'triangle',.012);noise(.03,.02,3200);} // потрескивание бумаги
     if(k<1)requestAnimationFrame(frame);else finish();})(t0);
   function finish(){clearInterval(crack);
-    // «призрак» схлопнутого листа: высота страницы не меняется → вёрстка не прыгает
-    const gh=$('#paperGhost');if(gh){gh.innerHTML=paper.innerHTML;gh.style.height=paper.offsetHeight+'px';gh.classList.add('active');}
+    // «призрак» схлопнутого листа: на время анимации держит занятую высоту — вёрстка не прыгает;
+    // затем гаснет СИНХРОННО с листом и освобождает место (текст принятого контракта не остаётся)
+    const gh=$('#paperGhost');let ghostOn=false;
+    if(gh){const h=paper.offsetHeight;if(h>40){gh.innerHTML=paper.innerHTML;gh.style.height=h+'px';gh.classList.add('active');ghostOn=true;}}
     paper.classList.add('collapsed');ch.style.opacity=0;gl.style.opacity=0;
     bodyShake(350);
     for(let i=0;i<46;i++){const a=document.createElement('div');a.className='ash';
@@ -966,7 +1119,8 @@ function burn(rec){const paper=$('#paper'),box=$('#paperBox'),ch=$('#charRing'),
     const L=$('#lighter');L.classList.remove('show','touch'); // забираем сверху за край экрана
     $('#burnGlow').classList.remove('on');
     CONTRACT=null;
-    setTimeout(()=>{paper.innerHTML='';},1300);
+    setTimeout(()=>{if(ghostOn)gh.classList.add('fade');},1250); // гаснем чуть раньше полного схлопывания
+    setTimeout(()=>{paper.innerHTML='';if(gh){gh.innerHTML='';gh.className='';}},2600);
     setTimeout(()=>{$('#doneInfo').innerHTML=`КОНТРАКТ ${maskHTML(rec.number)}<br>ИСПОЛНИТЕЛЬ: <b style="color:#ffb347">${esc(rec.signer)}</b><br>ВРЕМЯ УНИЧТОЖЕНИЯ: ${new Date(rec.ts).toLocaleString('ru-RU')}`;
       $('#donePanel').classList.add('show');refreshRG();beep(520,.15,'sine',.08);beep(780,.25,'sine',.08);},1300);}}
 
@@ -1001,7 +1155,8 @@ boot(()=>{$('#hdr').classList.remove('hidden');$('#ftr').classList.remove('hidde
       (()=>{try{const raw=JSON.parse(localStorage.getItem(DB_KEY)||'null');return(raw&&raw.chk&&dbChecksum(raw)!==raw.chk)?' · <b style="color:var(--red-glow)">ЦЕЛОСТНОСТЬ НАРУШЕНА</b>':'';}catch(e){return'';}})()+
       '<br>ЖУРНАЛ ОПЕРАЦИЙ БД (последние):<br>'+((d.logs||[]).slice(-10).reverse().map(l=>'['+new Date(l.ts).toLocaleString('ru-RU')+'] '+esc(l.msg)).join('<br>')||'—')+
       '<br>ЖУРНАЛ АКТИВНОСТИ (последние):<br>'+sec.slice(-8).reverse().map(s=>'['+new Date(s.ts).toLocaleString('ru-RU')+'] '+esc(s.type)+': '+esc(s.value)+' — '+esc(s.detail)).join('<br>');}
-  if(IS_CURATOR){initCurator();$('#curator').classList.remove('hidden');return;}
+  if(IS_CURATOR){initCurator();initCuratorUI();$('#curator').classList.remove('hidden');return;}
+  if(window.__KPK){$('#gate').classList.remove('hidden');return;} // контракт пришёл ссылкой — шлюз уже подготовлен в initCuratorUI
   if(dbFind(CONFIG.DOC_ID)){showArchive();return;}
   if(CONFIG.CIPHER){$('#gate').classList.remove('hidden');const s=lockState();if(s.until>Date.now()){$('#gateErr').textContent='ЗАБЛОКИРОВАНО: канал закрыт на перебор кодов.';}}
   else if(CONFIG.PLAIN){CONTRACT=CONFIG.PLAIN;$('#demoWarn').classList.remove('hidden');showContract();}
